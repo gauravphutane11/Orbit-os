@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ORBIT OS</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+<body>
+
+    <!-- =====================================================
+         BOOT SCREEN
+         ===================================================== -->
+
+    <main
+        class="boot-screen"
+        id="bootScreen"
+    >
+
+        <div class="stars"></div>
+
+        <div class="glow"></div>
+
+
+        <section class="boot-content">
+
+            <div class="orbit-logo">
+
+                <div
+                    class="orbit-ring ring-one"
+                ></div>
+
+                <div
+                    class="orbit-ring ring-two"
+                ></div>
+
+                <div class="orbit-core">
+                    O
+                </div>
+
+            </div>
+
+
+            <div class="brand">
+
+                <h1>
+                    ORBIT<span>OS</span>
+                </h1>
+
+                <p>
+                    Your digital space. All in one orbit.
+                </p>
+
+            </div>
+
+
+            <div class="boot-status">
+
+                <div class="status-row">
+
+                    <span id="statusText">
+                        Starting system...
+                    </span>
+
+                    <span id="loadingPercent">
+                        0%
+                    </span>
+
+                </div>
+
+
+                <div class="progress-track">
+
+                    <div
+                        class="progress-bar"
+                        id="progressBar"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="system-message"
+                id="systemMessage"
+            >
+                Initializing core services...
+            </div>
+
+        </section>
+
+
+        <footer class="boot-footer">
+
+            <span>
+                ORBIT SYSTEMS
+            </span>
+
+            <span>
+                BUILD 1.0.0
+            </span>
+
+        </footer>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         LOCK SCREEN
+         ===================================================== -->
+
+    <main
+        class="lock-screen"
+        id="lockScreen"
+    >
+
+        <div class="lock-stars"></div>
+
+        <div class="lock-glow"></div>
+
+
+        <header class="lock-topbar">
+
+            <div class="lock-brand">
+
+                <div class="mini-orbit-logo">
+                    O
+                </div>
+
+                <span>
+                    ORBIT OS
+                </span>
+
+            </div>
+
+
+            <div class="lock-status">
+
+                <span>
+                    ● Online
+                </span>
+
+                <span>
+                    ⌁ Connected
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <section class="lock-content">
+
+            <div
+                class="lock-time"
+                id="lockTime"
+            >
+                00:00
+            </div>
+
+
+            <div
+                class="lock-date"
+                id="lockDate"
+            >
+                Monday, January 1
+            </div>
+
+
+            <div class="lock-user">
+
+                <div class="lock-avatar">
+                    G
+                </div>
+
+                <h1>
+                    Guest User
+                </h1>
+
+                <p>
+                    Welcome back
+                </p>
+
+            </div>
+
+
+            <div class="pin-area">
+
+                <label for="pinInput">
+                    Enter your PIN
+                </label>
+
+
+                <div class="pin-input-wrapper">
+
+                    <input
+                        type="password"
+                        id="pinInput"
+                        maxlength="4"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        placeholder="••••"
+                        aria-label="Enter PIN"
+                    >
+
+
+                    <button
+                        id="togglePin"
+                        type="button"
+                        aria-label="Show or hide PIN"
+                    >
+                        ◉
+                    </button>
+
+                </div>
+
+
+                <button
+                    class="unlock-button"
+                    id="unlockButton"
+                    type="button"
+                >
+
+                    <span>
+                        Unlock
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+
+                <p
+                    class="pin-error"
+                    id="pinError"
+                ></p>
+
+            </div>
+
+
+            <div class="pin-hint">
+
+                Demo PIN:
+                <strong>1234</strong>
+
+            </div>
+
+        </section>
+
+
+        <footer class="lock-footer">
+
+            <span>
+                ORBIT SYSTEMS
+            </span>
+
+            <span>
+                BUILD 1.0.0
+            </span>
+
+        </footer>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         ORBIT OS DESKTOP
+         ===================================================== -->
+
+    <main
+        class="os-desktop"
+        id="osDesktop"
+    >
+
+
+        <div class="desktop-stars"></div>
+
+        <div
+            class="desktop-glow glow-left"
+        ></div>
+
+        <div
+            class="desktop-glow glow-right"
+        ></div>
+
+
+
+        <!-- =================================================
+             TOP SYSTEM BAR
+             ================================================= -->
+
+        <header class="desktop-topbar">
+
+            <div class="desktop-brand">
+
+                <div class="desktop-logo">
+                    O
+                </div>
+
+                <span>
+                    ORBIT OS
+                </span>
+
+            </div>
+
+
+            <div class="desktop-system-status">
+
+                <span class="online-status">
+                    ● Online
+                </span>
+
+                <span>
+                    ⌁ Connected
+                </span>
+
+                <span id="desktopTopTime">
+                    12:00 PM
+                </span>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             DESKTOP APPLICATIONS
+             ================================================= -->
+
+        <section class="desktop-apps">
+
+
+            <button
+                class="desktop-app-icon"
+                data-app="files"
+                type="button"
+            >
+
+                <div
+                    class="desktop-app-symbol files-symbol"
+                >
+                    📁
+                </div>
+
+                <span>
+                    Files
+                </span>
+
+            </button>
+
+
+            <button
+                class="desktop-app-icon"
+                data-app="notes"
+                type="button"
+            >
+
+                <div
+                    class="desktop-app-symbol notes-symbol"
+                >
+                    📝
+                </div>
+
+                <span>
+                    Notes
+                </span>
+
+            </button>
+
+
+            <button
+                class="desktop-app-icon"
+                data-app="browser"
+                type="button"
+            >
+
+                <div
+                    class="desktop-app-symbol browser-symbol"
+                >
+                    🌐
+                </div>
+
+                <span>
+                    Browser
+                </span>
+
+            </button>
+
+
+            <button
+                class="desktop-app-icon"
+                data-app="terminal"
+                type="button"
+            >
+
+                <div
+                    class="desktop-app-symbol terminal-symbol"
+                >
+                    &gt;_
+                </div>
+
+                <span>
+                    Terminal
+                </span>
+
+            </button>
+
+
+            <button
+                class="desktop-app-icon"
+                data-app="calculator"
+                type="button"
+            >
+
+                <div
+                    class="desktop-app-symbol calculator-symbol"
+                >
+                    🧮
+                </div>
+
+                <span>
+                    Calculator
+                </span>
+
+            </button>
+
+
+            <button
+                class="desktop-app-icon"
+                data-app="settings"
+                type="button"
+            >
+
+                <div
+                    class="desktop-app-symbol settings-symbol"
+                >
+                    ⚙
+                </div>
+
+                <span>
+                    Settings
+                </span>
+
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CENTER BRAND
+             ================================================= -->
+
+        <section class="desktop-center">
+
+            <div class="center-orbit">
+
+                <div
+                    class="center-ring center-ring-one"
+                ></div>
+
+                <div
+                    class="center-ring center-ring-two"
+                ></div>
+
+                <div class="center-core">
+                    O
+                </div>
+
+            </div>
+
+
+            <p class="desktop-welcome">
+                WELCOME BACK
+            </p>
+
+
+            <h1>
+                ORBIT<span>OS</span>
+            </h1>
+
+
+            <p class="desktop-subtitle">
+                Your digital space. All in one orbit.
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FILES WINDOW
+             ================================================= -->
+
+        <section
+            class="os-window"
+            id="filesWindow"
+            aria-label="Files application"
+        >
+
+
+            <!-- WINDOW HEADER -->
+
+            <header class="window-header">
+
+
+                <div class="window-title">
+
+                    <div class="window-app-icon">
+                        📁
+                    </div>
+
+                    <span>
+                        Files
+                    </span>
+
+                </div>
+
+
+                <div class="window-controls">
+
+
+                    <button
+                        class="window-control minimize-control"
+                        data-action="minimize"
+                        type="button"
+                        aria-label="Minimize window"
+                    >
+                        −
+                    </button>
+
+
+                    <button
+                        class="window-control maximize-control"
+                        data-action="maximize"
+                        type="button"
+                        aria-label="Maximize window"
+                    >
+                        □
+                    </button>
+
+
+                    <button
+                        class="window-control close-control"
+                        data-action="close"
+                        type="button"
+                        aria-label="Close window"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- WINDOW CONTENT -->
+
+            <div class="window-content">
+
+
+                <!-- =================================================
+                     FILE SIDEBAR
+                     ================================================= -->
+
+                <aside class="files-sidebar">
+
+
+                    <button
+                        class="sidebar-item active"
+                        type="button"
+                        data-folder="home"
+                    >
+                        <span>⌂</span>
+                        Home
+                    </button>
+
+
+                    <button
+                        class="sidebar-item"
+                        type="button"
+                        data-folder="favorites"
+                    >
+                        <span>★</span>
+                        Favorites
+                    </button>
+
+
+                    <button
+                        class="sidebar-item"
+                        type="button"
+                        data-folder="documents"
+                    >
+                        <span>▣</span>
+                        Documents
+                    </button>
+
+
+                    <button
+                        class="sidebar-item"
+                        type="button"
+                        data-folder="pictures"
+                    >
+                        <span>▧</span>
+                        Pictures
+                    </button>
+
+
+                    <button
+                        class="sidebar-item"
+                        type="button"
+                        data-folder="music"
+                    >
+                        <span>♫</span>
+                        Music
+                    </button>
+
+                </aside>
+
+
+
+                <!-- =================================================
+                     FILES MAIN
+                     ================================================= -->
+
+                <section class="files-main">
+
+
+                    <!-- TOOLBAR -->
+
+                    <div class="files-toolbar">
+
+                        <div class="files-navigation">
+
+                            <button
+                                class="navigation-button"
+                                id="filesBackButton"
+                                type="button"
+                                title="Back"
+                                aria-label="Go back"
+                                disabled
+                            >
+                                ←
+                            </button>
+
+                            <button
+                                class="navigation-button"
+                                id="filesForwardButton"
+                                type="button"
+                                title="Forward"
+                                aria-label="Go forward"
+                                disabled
+                            >
+                                →
+                            </button>
+
+                            <div
+                                class="breadcrumb"
+                                id="filesBreadcrumb"
+                            >
+                            </div>
+
+                        </div>
+
+                        <div class="files-actions">
+
+                            <div class="files-search">
+
+                                <span class="search-icon">
+                                    ⌕
+                                </span>
+
+                                <input
+                                    type="search"
+                                    id="filesSearchInput"
+                                    placeholder="Search"
+                                    autocomplete="off"
+                                    aria-label="Search files"
+                                >
+
+                            </div>
+
+                            <select
+                                class="files-sort"
+                                id="filesSort"
+                                aria-label="Sort files"
+                            >
+
+                                <option value="name-asc">
+                                    Name A → Z
+                                </option>
+
+                                <option value="name-desc">
+                                    Name Z → A
+                                </option>
+
+                                <option value="type">
+                                    Type
+                                </option>
+
+                            </select>
+
+                            <button
+                                id="filesRefreshButton"
+                                type="button"
+                                title="Refresh"
+                                aria-label="Refresh"
+                            >
+                                ↻
+                            </button>
+
+                            <button
+                                type="button"
+                                title="More options"
+                                aria-label="More options"
+                            >
+                                ⋯
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- HEADING -->
+
+                    <div class="files-heading">
+
+                        <div>
+
+                            <h2>
+                                Home
+                            </h2>
+
+                            <p>
+                                4 items
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- FILE GRID -->
+
+                    <div class="file-grid">
+
+
+                        <button
+                            class="file-card"
+                            type="button"
+                            data-item="documents"
+                            data-type="folder"
+                        >
+
+                            <div
+                                class="file-card-icon folder-icon"
+                            >
+                                📁
+                            </div>
+
+                            <div class="file-card-name">
+                                Documents
+                            </div>
+
+                            <small>
+                                Folder
+                            </small>
+
+                        </button>
+
+
+                        <button
+                            class="file-card"
+                            type="button"
+                            data-item="pictures"
+                            data-type="folder"
+                        >
+
+                            <div
+                                class="file-card-icon folder-icon"
+                            >
+                                📁
+                            </div>
+
+                            <div class="file-card-name">
+                                Pictures
+                            </div>
+
+                            <small>
+                                Folder
+                            </small>
+
+                        </button>
+
+
+                        <button
+                            class="file-card"
+                            type="button"
+                            data-item="projects"
+                            data-type="folder"
+                        >
+
+                            <div
+                                class="file-card-icon folder-icon"
+                            >
+                                📁
+                            </div>
+
+                            <div class="file-card-name">
+                                Projects
+                            </div>
+
+                            <small>
+                                Folder
+                            </small>
+
+                        </button>
+
+
+                        <button
+                            class="file-card"
+                            type="button"
+                            data-item="readme"
+                            data-type="file"
+                        >
+
+                            <div
+                                class="file-card-icon document-icon"
+                            >
+                                📄
+                            </div>
+
+                            <div class="file-card-name">
+                                readme.txt
+                            </div>
+
+                            <small>
+                                Text file
+                            </small>
+
+                        </button>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             TASKBAR
+             ================================================= -->
+
+        <footer class="desktop-taskbar">
+
+
+            <div class="taskbar-left">
+
+
+                <button
+                    class="taskbar-orbit"
+                    id="taskbarOrbitButton"
+                    type="button"
+                    aria-label="ORBIT menu"
+                >
+                    O
+                </button>
+
+
+                <button
+                    class="taskbar-search"
+                    type="button"
+                    aria-label="Search"
+                >
+
+                    <span>
+                        ⌕
+                    </span>
+
+                    <span>
+                        Search
+                    </span>
+
+                </button>
+
+            </div>
+
+
+
+            <div
+                class="taskbar-center"
+                id="taskbarCenter"
+            >
+
+                <button
+                    class="taskbar-app active"
+                    type="button"
+                    aria-label="Desktop"
+                >
+                    ◉
+                </button>
+
+            </div>
+
+
+
+            <div class="taskbar-right">
+
+                <span class="taskbar-icon">
+                    ⌁
+                </span>
+
+                <span class="taskbar-icon">
+                    🔊
+                </span>
+
+                <span class="taskbar-icon">
+                    🔋
+                </span>
+
+
+                <div class="desktop-clock">
+
+                    <strong
+                        id="desktopTaskbarTime"
+                    >
+                        12:00 PM
+                    </strong>
+
+                    <small
+                        id="desktopTaskbarDate"
+                    >
+                        10/09/2026
+                    </small>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>

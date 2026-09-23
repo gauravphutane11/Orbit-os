@@ -1,0 +1,2942 @@
+/* =====================================================
+   ORBIT OS
+   BOOT SCREEN
+   ===================================================== */
+
+
+/* ================= ROOT ================= */
+
+:root {
+    --background: #05070d;
+    --surface: #0d111b;
+
+    --text: #f4f7ff;
+    --text-soft: #8790a5;
+
+    --accent: #8b7cff;
+    --accent-light: #b7afff;
+
+    --border: rgba(255, 255, 255, 0.08);
+
+    --font:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+
+/* ================= RESET ================= */
+
+* {
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+
+body {
+    overflow: hidden;
+
+    font-family: var(--font);
+
+    background: var(--background);
+
+    color: var(--text);
+}
+
+
+/* ================= BOOT SCREEN ================= */
+
+.boot-screen {
+    position: relative;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(139, 124, 255, 0.10),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(83, 157, 255, 0.06),
+            transparent 25%
+        ),
+        #05070d;
+}
+
+
+/* ================= STARS ================= */
+
+.stars {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: 0.7;
+
+    background-image:
+        radial-gradient(circle, rgba(255,255,255,0.65) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,255,255,0.35) 1px, transparent 1px);
+
+    background-size:
+        130px 130px,
+        210px 210px;
+
+    background-position:
+        0 0,
+        70px 90px;
+
+    animation: starsMove 18s linear infinite;
+}
+
+
+@keyframes starsMove {
+
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-50px);
+    }
+
+}
+
+
+/* ================= CENTER GLOW ================= */
+
+.glow {
+    position: absolute;
+
+    width: 420px;
+    height: 420px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(139, 124, 255, 0.13),
+            transparent 68%
+        );
+
+    filter: blur(15px);
+
+    pointer-events: none;
+}
+
+
+/* ================= BOOT CONTENT ================= */
+
+.boot-content {
+    position: relative;
+
+    z-index: 2;
+
+    width: min(420px, 90vw);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+}
+
+
+/* ================= ORBIT LOGO ================= */
+
+.orbit-logo {
+    position: relative;
+
+    width: 110px;
+    height: 110px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 30px;
+}
+
+
+/* Core */
+
+.orbit-core {
+    position: relative;
+
+    width: 56px;
+    height: 56px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #978cff,
+            #6e62df
+        );
+
+    color: white;
+
+    font-size: 21px;
+    font-weight: 800;
+
+    box-shadow:
+        0 0 35px rgba(139, 124, 255, 0.35);
+
+    z-index: 3;
+}
+
+
+/* Orbit rings */
+
+.orbit-ring {
+    position: absolute;
+
+    width: 98px;
+    height: 44px;
+
+    border: 1px solid rgba(160, 151, 255, 0.65);
+
+    border-radius: 50%;
+
+    left: 50%;
+    top: 50%;
+
+    transform-origin: center;
+}
+
+
+.ring-one {
+    transform:
+        translate(-50%, -50%)
+        rotate(25deg);
+}
+
+
+.ring-two {
+    transform:
+        translate(-50%, -50%)
+        rotate(-25deg);
+}
+
+
+/* Orbit animation */
+
+.ring-one::after,
+.ring-two::after {
+    content: "";
+
+    position: absolute;
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: var(--accent-light);
+
+    box-shadow:
+        0 0 12px rgba(139, 124, 255, 0.8);
+}
+
+
+.ring-one::after {
+    top: -4px;
+    left: 50%;
+}
+
+
+.ring-two::after {
+    bottom: -4px;
+    left: 50%;
+}
+
+
+.ring-one {
+    animation:
+        orbitRotateOne 5s linear infinite;
+}
+
+
+.ring-two {
+    animation:
+        orbitRotateTwo 5s linear infinite;
+}
+
+
+@keyframes orbitRotateOne {
+
+    from {
+        transform:
+            translate(-50%, -50%)
+            rotate(25deg)
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            translate(-50%, -50%)
+            rotate(25deg)
+            rotate(360deg);
+    }
+
+}
+
+
+@keyframes orbitRotateTwo {
+
+    from {
+        transform:
+            translate(-50%, -50%)
+            rotate(-25deg)
+            rotate(360deg);
+    }
+
+    to {
+        transform:
+            translate(-50%, -50%)
+            rotate(-25deg)
+            rotate(0deg);
+    }
+
+}
+
+
+/* ================= BRAND ================= */
+
+.brand h1 {
+    font-size: clamp(40px, 8vw, 62px);
+
+    line-height: 1;
+
+    letter-spacing: -0.06em;
+
+    font-weight: 800;
+}
+
+
+.brand h1 span {
+    color: var(--accent);
+}
+
+
+.brand p {
+    margin-top: 12px;
+
+    color: var(--text-soft);
+
+    font-size: 12px;
+
+    letter-spacing: 0.03em;
+}
+
+
+/* ================= STATUS ================= */
+
+.boot-status {
+    width: 100%;
+
+    margin-top: 55px;
+}
+
+
+.status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 10px;
+
+    color: var(--text-soft);
+
+    font-size: 11px;
+}
+
+
+#loadingPercent {
+    color: var(--accent-light);
+
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* ================= PROGRESS ================= */
+
+.progress-track {
+    width: 100%;
+    height: 4px;
+
+    overflow: hidden;
+
+    border-radius: 100px;
+
+    background: rgba(255, 255, 255, 0.07);
+}
+
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #685ce0,
+            #a69cff
+        );
+
+    box-shadow:
+        0 0 14px rgba(139, 124, 255, 0.5);
+
+    transition: width 0.1s linear;
+}
+
+
+/* ================= SYSTEM MESSAGE ================= */
+
+.system-message {
+    min-height: 18px;
+
+    margin-top: 14px;
+
+    color: #626b80;
+
+    font-family: "Courier New", monospace;
+
+    font-size: 10px;
+
+    letter-spacing: 0.02em;
+}
+
+
+/* ================= FOOTER ================= */
+
+.boot-footer {
+    position: absolute;
+
+    left: 25px;
+    right: 25px;
+    bottom: 22px;
+
+    display: flex;
+    justify-content: space-between;
+
+    color: #4f5666;
+
+    font-size: 9px;
+
+    letter-spacing: 0.12em;
+}
+
+
+/* ================= READY STATE ================= */
+
+.boot-content.ready .orbit-core {
+    box-shadow:
+        0 0 45px rgba(139, 124, 255, 0.55);
+}
+
+
+.boot-content.ready .brand {
+    animation: readyPulse 0.6s ease;
+}
+
+
+@keyframes readyPulse {
+
+    0% {
+        opacity: 0.4;
+        transform: translateY(4px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 600px) {
+
+    .boot-content {
+        width: 82vw;
+    }
+
+    .orbit-logo {
+        width: 95px;
+        height: 95px;
+    }
+
+    .orbit-core {
+        width: 50px;
+        height: 50px;
+    }
+
+    .orbit-ring {
+        width: 86px;
+        height: 40px;
+    }
+
+    .boot-status {
+        margin-top: 45px;
+    }
+
+    .boot-footer {
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+    }
+
+}
+/* =====================================================
+   ORBIT OS
+   LOCK SCREEN
+   ===================================================== */
+
+
+/* ================= LOCK SCREEN ================= */
+
+.lock-screen {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 500;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(139, 124, 255, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(70, 145, 255, 0.08),
+            transparent 25%
+        ),
+        #05070d;
+
+    color: var(--text);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.7s ease,
+        visibility 0.7s ease;
+}
+
+
+/* Lock screen becomes visible */
+
+.lock-screen.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* ================= BACKGROUND ================= */
+
+.lock-stars {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: 0.55;
+
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.65) 1px,
+            transparent 1px
+        ),
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.30) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        140px 140px,
+        220px 220px;
+
+    background-position:
+        0 0,
+        80px 60px;
+
+    animation: lockStarsMove 20s linear infinite;
+}
+
+
+@keyframes lockStarsMove {
+
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-40px);
+    }
+
+}
+
+
+.lock-glow {
+    position: absolute;
+
+    width: 460px;
+    height: 460px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(139, 124, 255, 0.13),
+            transparent 68%
+        );
+
+    filter: blur(18px);
+
+    pointer-events: none;
+}
+
+
+/* ================= TOP BAR ================= */
+
+.lock-topbar {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 26px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+
+    background: rgba(5, 7, 13, 0.30);
+
+    backdrop-filter: blur(18px);
+}
+
+
+.lock-brand {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    color: #e8eaff;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 0.03em;
+}
+
+
+.mini-orbit-logo {
+    width: 27px;
+    height: 27px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #978cff,
+            #6e62df
+        );
+
+    color: white;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    box-shadow:
+        0 0 20px rgba(139, 124, 255, 0.25);
+}
+
+
+.lock-status {
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    color: #788195;
+
+    font-size: 10px;
+}
+
+
+.lock-status span:first-child {
+    color: #78daa1;
+}
+
+
+/* ================= LOCK CONTENT ================= */
+
+.lock-content {
+    position: relative;
+
+    z-index: 5;
+
+    width: min(380px, 90vw);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+}
+
+
+/* ================= TIME ================= */
+
+.lock-time {
+    font-size: clamp(58px, 10vw, 90px);
+
+    line-height: 0.95;
+
+    letter-spacing: -0.07em;
+
+    font-weight: 700;
+
+    font-variant-numeric: tabular-nums;
+
+    text-shadow:
+        0 0 40px rgba(139, 124, 255, 0.10);
+}
+
+
+.lock-date {
+    margin-top: 13px;
+
+    color: #8992a7;
+
+    font-size: 13px;
+
+    letter-spacing: 0.01em;
+}
+
+
+/* ================= USER ================= */
+
+.lock-user {
+    margin-top: 42px;
+}
+
+
+.lock-avatar {
+    width: 74px;
+    height: 74px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 15px;
+
+    border: 1px solid rgba(255, 255, 255, 0.13);
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #8376ed,
+            #5a9fe9
+        );
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.30),
+        0 0 35px rgba(139, 124, 255, 0.16);
+
+    color: white;
+
+    font-size: 25px;
+    font-weight: 700;
+}
+
+
+.lock-user h1 {
+    font-size: 18px;
+
+    font-weight: 600;
+
+    letter-spacing: -0.02em;
+}
+
+
+.lock-user p {
+    margin-top: 6px;
+
+    color: #737c91;
+
+    font-size: 11px;
+}
+
+
+/* ================= PIN ================= */
+
+.pin-area {
+    width: 100%;
+
+    margin-top: 30px;
+}
+
+
+.pin-area label {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: #7f8799;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.12em;
+}
+
+
+.pin-input-wrapper {
+    position: relative;
+
+    width: 100%;
+}
+
+
+.pin-input-wrapper input {
+    width: 100%;
+
+    height: 50px;
+
+    padding: 0 45px 0 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.09);
+
+    border-radius: 12px;
+
+    outline: none;
+
+    background: rgba(255, 255, 255, 0.045);
+
+    color: white;
+
+    text-align: center;
+
+    letter-spacing: 0.45em;
+
+    font-size: 18px;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.pin-input-wrapper input::placeholder {
+    color: #555d6d;
+
+    letter-spacing: 0.35em;
+}
+
+
+.pin-input-wrapper input:focus {
+    border-color: rgba(139, 124, 255, 0.55);
+
+    background: rgba(139, 124, 255, 0.05);
+
+    box-shadow:
+        0 0 0 3px rgba(139, 124, 255, 0.08);
+}
+
+
+.pin-input-wrapper button {
+    position: absolute;
+
+    top: 50%;
+    right: 13px;
+
+    transform: translateY(-50%);
+
+    width: 27px;
+    height: 27px;
+
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #737c90;
+
+    font-size: 13px;
+
+    transition: color 0.2s ease;
+}
+
+
+.pin-input-wrapper button:hover {
+    color: white;
+}
+
+
+/* ================= UNLOCK ================= */
+
+.unlock-button {
+    width: 100%;
+
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 10px;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #887cff,
+            #7164df
+        );
+
+    color: white;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    box-shadow:
+        0 10px 25px rgba(90, 78, 205, 0.20);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.unlock-button:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 13px 30px rgba(90, 78, 205, 0.28);
+}
+
+
+.unlock-button:active {
+    transform: translateY(0);
+}
+
+
+.unlock-button span {
+    font-size: 15px;
+}
+
+
+/* ================= ERROR ================= */
+
+.pin-error {
+    min-height: 17px;
+
+    margin-top: 9px;
+
+    color: #ff8585;
+
+    font-size: 10px;
+}
+
+
+/* ================= HINT ================= */
+
+.pin-hint {
+    margin-top: 18px;
+
+    color: #525a6a;
+
+    font-size: 9px;
+
+    letter-spacing: 0.03em;
+}
+
+
+.pin-hint strong {
+    color: #777f91;
+
+    font-weight: 600;
+}
+
+
+/* ================= FOOTER ================= */
+
+.lock-footer {
+    position: absolute;
+
+    left: 25px;
+    right: 25px;
+    bottom: 22px;
+
+    display: flex;
+    justify-content: space-between;
+
+    color: #434b5c;
+
+    font-size: 9px;
+
+    letter-spacing: 0.12em;
+}
+
+
+/* ================= UNLOCK ANIMATION ================= */
+
+.lock-screen.unlocking {
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.8s ease;
+}
+
+
+.boot-screen.hidden {
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.8s ease;
+}
+
+
+/* ================= WRONG PIN ANIMATION ================= */
+
+.pin-input-wrapper.shake {
+    animation: shakePin 0.35s ease;
+}
+
+
+@keyframes shakePin {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-7px);
+    }
+
+    75% {
+        transform: translateX(7px);
+    }
+
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 600px) {
+
+    .lock-topbar {
+        padding: 0 15px;
+    }
+
+    .lock-status span:nth-child(2) {
+        display: none;
+    }
+
+    .lock-footer {
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+    }
+
+    .lock-user {
+        margin-top: 34px;
+    }
+
+    .lock-avatar {
+        width: 66px;
+        height: 66px;
+    }
+
+}
+
+/* =====================================================
+   ORBIT OS
+   DESKTOP ENVIRONMENT
+   ===================================================== */
+
+
+/* ================= DESKTOP ================= */
+
+.os-desktop {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(139, 124, 255, 0.10),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(72, 155, 255, 0.07),
+            transparent 24%
+        ),
+        radial-gradient(
+            circle at 85% 75%,
+            rgba(105, 83, 255, 0.06),
+            transparent 28%
+        ),
+        #05070d;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition:
+        opacity 0.8s ease,
+        visibility 0.8s ease;
+}
+
+
+.os-desktop.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* ================= STARS ================= */
+
+.desktop-stars {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: 0.45;
+
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.65) 1px,
+            transparent 1px
+        ),
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.30) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        150px 150px,
+        230px 230px;
+
+    background-position:
+        0 0,
+        90px 70px;
+
+    animation:
+        desktopStarsMove 25s linear infinite;
+}
+
+
+@keyframes desktopStarsMove {
+
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-60px);
+    }
+
+}
+
+
+/* ================= GLOW ================= */
+
+.desktop-glow {
+    position: absolute;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    filter: blur(12px);
+}
+
+
+.glow-left {
+    width: 360px;
+    height: 360px;
+
+    left: 12%;
+    bottom: 5%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(89, 105, 255, 0.06),
+            transparent 70%
+        );
+}
+
+
+.glow-right {
+    width: 420px;
+    height: 420px;
+
+    right: 5%;
+    top: 10%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(131, 85, 255, 0.05),
+            transparent 70%
+        );
+}
+
+
+/* ================= TOP BAR ================= */
+
+.desktop-topbar {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 24px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+
+    background: rgba(7, 8, 14, 0.55);
+
+    backdrop-filter: blur(18px);
+
+    z-index: 10;
+}
+
+
+.desktop-brand {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    color: #e9ebf4;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+.desktop-logo {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #988cff,
+            #6b60db
+        );
+
+    color: white;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    box-shadow:
+        0 0 20px rgba(139, 124, 255, 0.20);
+}
+
+
+.desktop-system-status {
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    color: #737d92;
+
+    font-size: 10px;
+}
+
+
+.online-status {
+    color: #78dba1;
+}
+
+
+/* ================= DESKTOP APPS ================= */
+
+.desktop-apps {
+    position: absolute;
+
+    top: 82px;
+    left: 20px;
+
+    width: 190px;
+
+    display: grid;
+    grid-template-columns: repeat(2, 82px);
+
+    gap: 8px;
+
+    z-index: 5;
+}
+
+
+.desktop-app-icon {
+    width: 82px;
+    height: 76px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 5px;
+
+    border: 1px solid transparent;
+    outline: none;
+
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: #e8eaf1;
+
+    appearance: none;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.desktop-app-icon:hover {
+    background: rgba(255, 255, 255, 0.07);
+
+    border-color: rgba(255, 255, 255, 0.08);
+
+    transform: translateY(-2px);
+}
+.desktop-app-icon:focus,
+.desktop-app-icon:focus-visible {
+    outline: none;
+
+    border-color: rgba(139, 124, 255, 0.25);
+}
+
+.desktop-app-icon span {
+    font-size: 11px;
+}
+
+
+/* ================= APP SYMBOLS ================= */
+
+.desktop-app-symbol {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+
+    background: rgba(255, 255, 255, 0.055);
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.18);
+
+    font-size: 22px;
+}
+
+
+.files-symbol {
+    background: rgba(75, 129, 255, 0.15);
+}
+
+
+.notes-symbol {
+    background: rgba(255, 198, 78, 0.13);
+}
+
+
+.browser-symbol {
+    background: rgba(75, 207, 232, 0.13);
+}
+
+
+.terminal-symbol {
+    background: rgba(255, 255, 255, 0.07);
+
+    color: #c9ccd4;
+
+    font-family: monospace;
+
+    font-size: 15px;
+}
+
+
+.calculator-symbol {
+    background: rgba(141, 123, 255, 0.15);
+}
+
+
+.settings-symbol {
+    background: rgba(255, 255, 255, 0.07);
+
+    font-size: 20px;
+}
+
+
+/* ================= CENTER ================= */
+
+.desktop-center {
+    position: absolute;
+
+    top: 47%;
+    left: 50%;
+
+    transform:
+        translate(-50%, -48%);
+
+    text-align: center;
+
+    z-index: 3;
+}
+
+/* ================= CENTER ORBIT ================= */
+
+.center-orbit {
+    position: relative;
+
+    width: 160px;
+    height: 160px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 26px;
+}
+
+
+.center-core {
+    width: 62px;
+    height: 62px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #988cff,
+            #6860d9
+        );
+
+    color: white;
+
+    font-size: 22px;
+    font-weight: 800;
+
+    box-shadow:
+        0 0 45px rgba(139, 124, 255, 0.30);
+}
+
+
+.center-ring {
+    position: absolute;
+
+    width: 145px;
+    height: 56px;
+
+    border: 1px solid rgba(151, 142, 255, 0.36);
+
+    border-radius: 50%;
+
+    left: 50%;
+    top: 50%;
+
+    transform-origin: center;
+}
+
+
+.center-ring-one {
+    transform:
+        translate(-50%, -50%)
+        rotate(25deg);
+
+    animation:
+        desktopOrbitOne 7s linear infinite;
+}
+
+
+.center-ring-two {
+    transform:
+        translate(-50%, -50%)
+        rotate(-25deg);
+
+    animation:
+        desktopOrbitTwo 7s linear infinite;
+}
+
+
+.center-ring-one::after,
+.center-ring-two::after {
+    content: "";
+
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #aaa2ff;
+
+    box-shadow:
+        0 0 12px rgba(139, 124, 255, 0.65);
+}
+
+
+.center-ring-one::after {
+    left: 50%;
+    top: -4px;
+}
+
+
+.center-ring-two::after {
+    left: 50%;
+    bottom: -4px;
+}
+
+
+@keyframes desktopOrbitOne {
+
+    from {
+        transform:
+            translate(-50%, -50%)
+            rotate(25deg)
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            translate(-50%, -50%)
+            rotate(25deg)
+            rotate(360deg);
+    }
+
+}
+
+
+@keyframes desktopOrbitTwo {
+
+    from {
+        transform:
+            translate(-50%, -50%)
+            rotate(-25deg)
+            rotate(360deg);
+    }
+
+    to {
+        transform:
+            translate(-50%, -50%)
+            rotate(-25deg)
+            rotate(0deg);
+    }
+
+}
+
+
+/* ================= CENTER TEXT ================= */
+
+.desktop-welcome {
+    color: #6e7689;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: 0.25em;
+}
+
+
+.desktop-center h1 {
+    margin-top: 9px;
+
+    font-size: clamp(52px, 8vw, 88px);
+
+    line-height: 0.95;
+
+    letter-spacing: -0.08em;
+
+    font-weight: 800;
+}
+
+
+.desktop-center h1 span {
+    color: #8e83f6;
+}
+
+
+.desktop-subtitle {
+    margin-top: 13px;
+
+    color: #6d7588;
+
+    font-size: 11px;
+}
+
+
+/* ================= TASKBAR ================= */
+
+.desktop-taskbar {
+    position: absolute;
+
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 16px;
+
+    background: rgba(15, 16, 23, 0.82);
+
+    backdrop-filter: blur(22px);
+
+    box-shadow:
+        0 20px 55px rgba(0, 0, 0, 0.32);
+
+    z-index: 20;
+}
+
+
+.taskbar-left,
+.taskbar-center,
+.taskbar-right {
+    display: flex;
+    align-items: center;
+}
+
+
+.taskbar-left {
+    gap: 7px;
+}
+
+
+.taskbar-orbit {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background:
+        rgba(139, 124, 255, 0.16);
+
+    color: #beb7ff;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+
+.taskbar-orbit:hover {
+    background:
+        rgba(139, 124, 255, 0.24);
+}
+
+
+.taskbar-search {
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 0 12px;
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.045);
+
+    color: #7d8597;
+
+    font-size: 10px;
+}
+
+
+.taskbar-search:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
+
+
+.taskbar-app {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 10px;
+
+    background: rgba(139, 124, 255, 0.14);
+
+    color: #c5c0ff;
+
+    font-size: 15px;
+}
+
+
+.taskbar-right {
+    gap: 11px;
+}
+
+
+.taskbar-icon {
+    color: #788194;
+
+    font-size: 11px;
+}
+
+
+.desktop-clock {
+    min-width: 70px;
+
+    text-align: right;
+}
+
+
+.desktop-clock strong {
+    display: block;
+
+    color: #d9dce4;
+
+    font-size: 10px;
+}
+
+
+.desktop-clock small {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #687185;
+
+    font-size: 8px;
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 700px) {
+
+    .desktop-topbar {
+        padding: 0 15px;
+    }
+
+
+    .desktop-system-status span:nth-child(2) {
+        display: none;
+    }
+
+
+    .desktop-apps {
+        top: 78px;
+        left: 12px;
+
+        display: grid;
+        grid-template-columns: repeat(3, 78px);
+
+        gap: 7px;
+    }
+
+
+    .desktop-center {
+        width: 90%;
+    }
+
+
+    .center-orbit {
+        width: 130px;
+        height: 130px;
+    }
+
+
+    .center-ring {
+        width: 120px;
+        height: 48px;
+    }
+
+
+    .desktop-center h1 {
+        font-size: 56px;
+    }
+
+
+    .taskbar-search {
+        display: none;
+    }
+
+
+    .desktop-taskbar {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+    }
+
+
+    .taskbar-icon {
+        display: none;
+    }
+
+}
+
+/* =====================================================
+   ORBIT OS
+   WINDOW SYSTEM - STEP 4
+   ===================================================== */
+
+
+/* ================= WINDOW ================= */
+
+.os-window {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    width: min(850px, calc(100vw - 180px));
+    height: min(540px, calc(100vh - 180px));
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+
+    border-radius: 16px;
+
+    background: rgba(20, 22, 30, 0.97);
+
+    box-shadow:
+        0 35px 100px rgba(0, 0, 0, 0.45);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform:
+        translate(-50%, -48%)
+        scale(0.96);
+
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease,
+        visibility 0.18s ease;
+
+    z-index: 100;
+}
+
+
+/* ================= OPEN WINDOW ================= */
+
+.os-window.open {
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+        translate(-50%, -50%)
+        scale(1);
+}
+
+
+/* ================= MINIMIZED ================= */
+
+.os-window.minimized {
+    display: none;
+}
+
+
+/* ================= WINDOW HEADER ================= */
+
+.os-window .window-header {
+    height: 52px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 10px 0 15px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    user-select: none;
+}
+
+
+/* ================= WINDOW TITLE ================= */
+
+.window-title {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    color: #e9ebf2;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+.window-app-icon {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background:
+        rgba(75, 129, 255, 0.14);
+
+    font-size: 14px;
+}
+
+
+/* ================= WINDOW CONTROLS ================= */
+
+.window-controls {
+    display: flex;
+
+    gap: 4px;
+}
+
+
+.window-control {
+    width: 31px;
+    height: 29px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid transparent;
+
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #7d8597;
+
+    font-size: 14px;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.window-control:hover {
+    background:
+        rgba(255, 255, 255, 0.07);
+
+    color: #eef0f5;
+}
+
+
+.close-control:hover {
+    background:
+        rgba(255, 80, 80, 0.15);
+
+    color: #ff9393;
+}
+
+
+/* ================= WINDOW CONTENT ================= */
+
+.window-content {
+    flex: 1;
+
+    min-height: 0;
+
+    display: flex;
+
+    overflow: hidden;
+}
+
+
+/* ================= FILE SIDEBAR ================= */
+
+.files-sidebar {
+    width: 175px;
+
+    flex-shrink: 0;
+
+    padding: 15px 10px;
+
+    border-right:
+        1px solid rgba(255, 255, 255, 0.07);
+
+    background:
+        rgba(0, 0, 0, 0.12);
+}
+
+
+.sidebar-item {
+    width: 100%;
+
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 4px;
+
+    padding: 0 11px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #7e8799;
+
+    text-align: left;
+
+    font-size: 11px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.sidebar-item span {
+    width: 17px;
+
+    text-align: center;
+}
+
+
+.sidebar-item:hover {
+    background:
+        rgba(255, 255, 255, 0.05);
+
+    color: #e7e9ef;
+}
+
+
+.sidebar-item.active {
+    background:
+        rgba(139, 124, 255, 0.13);
+
+    color: #c3bdff;
+}
+
+
+/* ================= FILES MAIN ================= */
+
+.files-main {
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+}
+
+
+/* ================= FILES TOOLBAR ================= */
+
+.files-toolbar {
+    height: 56px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 20px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.06);
+}
+
+
+.breadcrumb {
+    color: #b8becb;
+
+    font-size: 11px;
+}
+
+
+.files-actions {
+    display: flex;
+
+    gap: 5px;
+}
+
+
+.files-actions button {
+    width: 30px;
+    height: 30px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    color: #7e8799;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.files-actions button:hover {
+    background:
+        rgba(255, 255, 255, 0.08);
+
+    color: #eef0f5;
+}
+
+
+/* ================= FILES HEADING ================= */
+
+.files-heading {
+    padding: 22px 22px 14px;
+}
+
+
+.files-heading h2 {
+    color: #eff1f6;
+
+    font-size: 20px;
+
+    font-weight: 600;
+
+    letter-spacing: -0.03em;
+}
+
+
+.files-heading p {
+    margin-top: 5px;
+
+    color: #687286;
+
+    font-size: 10px;
+}
+
+
+/* ================= FILE GRID ================= */
+
+.file-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(150px, 1fr)
+        );
+
+    gap: 12px;
+
+    padding: 8px 22px 25px;
+}
+
+
+/* ================= FILE CARD ================= */
+
+.file-card {
+    min-height: 145px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    padding: 17px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.07);
+
+    border-radius: 12px;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    color: #e7e9ef;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+
+
+.file-card:hover {
+    transform: translateY(-2px);
+
+    background:
+        rgba(255, 255, 255, 0.055);
+
+    border-color:
+        rgba(139, 124, 255, 0.22);
+}
+
+
+/* ================= FILE ICON ================= */
+
+.file-card-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: auto;
+
+    border-radius: 12px;
+
+    font-size: 25px;
+}
+
+
+.folder-icon {
+    background:
+        rgba(74, 128, 255, 0.13);
+}
+
+
+.document-icon {
+    background:
+        rgba(255, 195, 80, 0.10);
+}
+
+
+/* ================= FILE NAME ================= */
+
+.file-card-name {
+    margin-top: 17px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+.file-card small {
+    margin-top: 4px;
+
+    color: #626b7d;
+
+    font-size: 9px;
+}
+
+
+/* ================= MAXIMIZED ================= */
+
+.os-window.maximized {
+    top: 58px;
+    left: 0;
+
+    width: 100%;
+    height: calc(100% - 58px);
+
+    border-radius: 0;
+
+    transform: none;
+}
+
+
+/* ================= WINDOW FOCUS ================= */
+
+.os-window button:focus {
+    outline: none;
+}
+
+
+.os-window button:focus-visible {
+    outline: none;
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 700px) {
+
+    .os-window {
+        width:
+            calc(100vw - 20px);
+
+        height:
+            calc(100vh - 125px);
+    }
+
+
+    .files-sidebar {
+        width: 125px;
+    }
+
+
+    .file-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(120px, 1fr)
+            );
+    }
+
+
+    .os-window.maximized {
+        top: 0;
+
+        width: 100%;
+
+        height:
+            calc(100% - 74px);
+    }
+
+}
+
+/* =====================================================
+   ORBIT OS
+   DRAGGABLE WINDOWS
+   ===================================================== */
+
+.os-window.dragging {
+    transition: none;
+
+    cursor: grabbing;
+
+    user-select: none;
+}
+
+.os-window .window-header {
+    cursor: grab;
+}
+
+.os-window.dragging .window-header {
+    cursor: grabbing;
+}
+
+/* =====================================================
+   ORBIT OS
+   FINAL CONTROL FOCUS RESET
+   ===================================================== */
+
+.desktop-app-icon:focus,
+.desktop-app-icon:focus-visible,
+.taskbar-orbit:focus,
+.taskbar-orbit:focus-visible,
+.taskbar-app:focus,
+.taskbar-app:focus-visible,
+.file-card:focus,
+.file-card:focus-visible,
+.sidebar-item:focus,
+.sidebar-item:focus-visible {
+    outline: none;
+}
+
+/* =====================================================
+   FILE NAVIGATION
+   ===================================================== */
+
+.files-navigation {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+}
+
+
+.navigation-button {
+    width: 30px;
+    height: 30px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 7px;
+
+    background:
+        rgba(255, 255, 255, 0.045);
+
+    color: #9aa2b2;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.navigation-button:hover:not(:disabled) {
+    background:
+        rgba(255, 255, 255, 0.09);
+
+    color: #ffffff;
+}
+
+
+.navigation-button:disabled {
+    opacity: 0.28;
+
+    cursor: default;
+}
+
+
+.breadcrumb {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+}
+
+
+.breadcrumb-item {
+    flex-shrink: 0;
+
+    padding: 5px 7px;
+
+    border: none;
+    border-radius: 6px;
+
+    background: transparent;
+
+    color: #7f899c;
+
+    font-size: 11px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.breadcrumb-item:hover {
+    background:
+        rgba(255, 255, 255, 0.05);
+
+    color: #dfe2e9;
+}
+
+
+.breadcrumb-item.current {
+    color: #dfe2e9;
+
+    cursor: default;
+}
+
+
+.breadcrumb-separator {
+    flex-shrink: 0;
+
+    color: #4d5668;
+
+    font-size: 10px;
+}
+
+/* =====================================================
+   ORBIT OS
+   FILE SEARCH + SORT - STEP 6C
+   ===================================================== */
+
+
+/* ================= FILE ACTIONS ================= */
+
+.files-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+}
+
+
+/* ================= SEARCH ================= */
+
+.files-search {
+    width: 170px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 0 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    border-radius: 8px;
+
+    background:
+        rgba(255, 255, 255, 0.035);
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.files-search:focus-within {
+    border-color:
+        rgba(139, 124, 255, 0.35);
+
+    background:
+        rgba(139, 124, 255, 0.05);
+}
+
+
+.search-icon {
+    flex-shrink: 0;
+
+    color: #727c90;
+
+    font-size: 13px;
+}
+
+
+.files-search input {
+    width: 100%;
+
+    min-width: 0;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #e8eaf0;
+
+    font-family: inherit;
+
+    font-size: 10px;
+}
+
+
+.files-search input::placeholder {
+    color: #626b7d;
+}
+
+
+/* ================= SORT ================= */
+
+.files-sort {
+    height: 32px;
+
+    padding: 0 25px 0 9px;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    border-radius: 8px;
+
+    outline: none;
+
+    background:
+        rgba(255, 255, 255, 0.035);
+
+    color: #8992a5;
+
+    font-family: inherit;
+
+    font-size: 9px;
+
+    cursor: pointer;
+}
+
+
+.files-sort:hover {
+    background:
+        rgba(255, 255, 255, 0.06);
+
+    color: #dce0e8;
+}
+
+
+.files-sort:focus {
+    border-color:
+        rgba(139, 124, 255, 0.35);
+}
+
+
+.files-sort option {
+    background: #171922;
+
+    color: #e8eaf0;
+}
+
+
+/* ================= EMPTY SEARCH STATE ================= */
+
+.files-empty {
+    grid-column: 1 / -1;
+
+    min-height: 220px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #667084;
+
+    text-align: center;
+}
+
+
+.files-empty-icon {
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 12px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    font-size: 21px;
+}
+
+
+.files-empty h3 {
+    color: #abb2c0;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+.files-empty p {
+    margin-top: 5px;
+
+    color: #626c80;
+
+    font-size: 9px;
+}
+
+
+/* ================= FILE TOOLBAR RESPONSIVE ================= */
+
+@media (max-width: 850px) {
+
+    .files-toolbar {
+        height: auto;
+
+        min-height: 56px;
+
+        flex-wrap: wrap;
+
+        gap: 8px;
+
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+
+    .files-navigation {
+        flex: 1 1 100%;
+    }
+
+
+    .files-actions {
+        width: 100%;
+
+        justify-content: flex-end;
+    }
+
+
+    .files-search {
+        width: 150px;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .files-actions {
+        justify-content: flex-start;
+    }
+
+
+    .files-search {
+        width: 130px;
+    }
+
+
+    .files-sort {
+        max-width: 120px;
+    }
+
+}
+
+/* =====================================================
+   ORBIT OS
+   FILE SELECTION + CONTEXT MENU
+   STEP 6D
+   ===================================================== */
+
+
+/* ================= SELECTED FILE ================= */
+
+.file-card.selected {
+    background:
+        rgba(139, 124, 255, 0.12);
+
+    border-color:
+        rgba(139, 124, 255, 0.45);
+
+    box-shadow:
+        0 0 0 1px
+        rgba(139, 124, 255, 0.08);
+}
+
+
+/* ================= CONTEXT MENU ================= */
+
+.file-context-menu {
+    position: fixed;
+
+    min-width: 165px;
+
+    padding: 6px;
+
+    display: none;
+
+    flex-direction: column;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.09);
+
+    border-radius: 10px;
+
+    background:
+        rgba(20, 22, 30, 0.98);
+
+    box-shadow:
+        0 18px 45px
+        rgba(0, 0, 0, 0.45);
+
+    z-index: 1000;
+
+    backdrop-filter: blur(18px);
+}
+
+
+.file-context-menu.open {
+    display: flex;
+}
+
+
+/* ================= MENU BUTTONS ================= */
+
+.file-context-menu button {
+    width: 100%;
+
+    height: 34px;
+
+    padding: 0 11px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #b7bfce;
+
+    text-align: left;
+
+    font-family: inherit;
+
+    font-size: 10px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.file-context-menu button:hover {
+    background:
+        rgba(255, 255, 255, 0.06);
+
+    color: #ffffff;
+}
+
+
+/* ================= DIVIDER ================= */
+
+.context-divider {
+    height: 1px;
+
+    margin: 5px 4px;
+
+    background:
+        rgba(255, 255, 255, 0.07);
+}
