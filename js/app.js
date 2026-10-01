@@ -1,25 +1,12 @@
 /* =========================================================
    ORBIT OS
-   COMPLETE JAVASCRIPT
-   STEP 6D
-
-   Boot Screen
-   Lock Screen
-   Desktop
-   Files
-   Search
-   Sort
-   Navigation
-   Window Controls
-   Dragging
-   File Selection
-   Context Menu
+   COMPLETE APPLICATION JAVASCRIPT
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
-       HELPER FUNCTIONS
+       ELEMENT HELPERS
        ===================================================== */
 
     const $ = (selector, parent = document) =>
@@ -28,111 +15,589 @@ document.addEventListener("DOMContentLoaded", () => {
     const $$ = (selector, parent = document) =>
         [...parent.querySelectorAll(selector)];
 
+    const byId = id =>
+        document.getElementById(id);
+
 
     /* =====================================================
-       DOM REFERENCES
+       CORE ELEMENTS
        ===================================================== */
 
-    const bootScreen =
-        $("#bootScreen") ||
-        $(".boot-screen");
+    const bootScreen = byId("bootScreen");
+    const bootContent = $(".boot-content");
+    const progressBar = byId("progressBar");
+    const loadingPercent = byId("loadingPercent");
+    const statusText = byId("statusText");
+    const systemMessage = byId("systemMessage");
 
-    const bootContent =
-        $(".boot-content");
+    const lockScreen = byId("lockScreen");
+    const lockTime = byId("lockTime");
+    const lockDate = byId("lockDate");
+    const pinInput = byId("pinInput");
+    const pinError = byId("pinError");
+    const unlockButton = byId("unlockButton");
+    const togglePin = byId("togglePin");
 
-    const progressBar =
-        $("#progressBar");
+    const osDesktop = byId("osDesktop");
+    const desktopTopTime = byId("desktopTopTime");
+    const desktopTaskbarTime = byId("desktopTaskbarTime");
+    const desktopTaskbarDate = byId("desktopTaskbarDate");
 
-    const loadingPercent =
-        $("#loadingPercent");
-
-    const statusText =
-        $("#statusText");
-
-    const systemMessage =
-        $("#systemMessage");
-
-
-    const lockScreen =
-        $("#lockScreen");
-
-    const lockTime =
-        $("#lockTime");
-
-    const lockDate =
-        $("#lockDate");
-
-    const pinInput =
-        $("#pinInput");
-
-    const unlockButton =
-        $("#unlockButton");
-
-    const pinError =
-        $("#pinError");
-
-    const togglePin =
-        $("#togglePin");
-
-
-    const osDesktop =
-        $("#osDesktop");
-
-    const desktopTopTime =
-        $("#desktopTopTime");
-
-    const desktopTaskbarTime =
-        $("#desktopTaskbarTime");
-
-    const desktopTaskbarDate =
-        $("#desktopTaskbarDate");
-
-
-    const filesWindow =
-        $("#filesWindow");
-
+    const filesWindow = byId("filesWindow");
     const filesDesktopIcon =
         $('.desktop-app-icon[data-app="files"]');
 
-    const taskbarCenter =
-        $("#taskbarCenter");
+    const taskbarCenter = byId("taskbarCenter");
+    const taskbarSearch = $(".taskbar-search");
+    const taskbarOrbitButton = byId("taskbarOrbitButton");
 
+    const fileGrid = $(".file-grid");
+    const filesBreadcrumb = byId("filesBreadcrumb");
+    const filesHeading = $(".files-heading h2");
+    const filesCount = $(".files-heading p");
 
-    const filesBreadcrumb =
-        $("#filesBreadcrumb") ||
-        $(".files-main .breadcrumb");
-
-    const filesHeading =
-        $(".files-heading h2");
-
-    const filesCount =
-        $(".files-heading p");
-
-    const fileGrid =
-        $(".files-main .file-grid");
+    const filesBackButton = byId("filesBackButton");
+    const filesForwardButton = byId("filesForwardButton");
+    const filesRefreshButton = byId("filesRefreshButton");
+    const filesSearchInput = byId("filesSearchInput");
+    const filesSort = byId("filesSort");
 
     const sidebarItems =
         $$(".files-sidebar .sidebar-item");
 
-    const filesBackButton =
-        $("#filesBackButton");
 
-    const filesForwardButton =
-        $("#filesForwardButton");
+    /* =====================================================
+       STORAGE KEYS
+       ===================================================== */
 
-    const filesRefreshButton =
-        $("#filesRefreshButton");
+    const FILES_KEY = "orbit-os-files-v3";
+    const NOTES_KEY = "orbit-os-notes-v3";
+    const SETTINGS_KEY = "orbit-os-settings-v3";
 
-    const filesSearchInput =
-        $("#filesSearchInput");
 
-    const filesSort =
-        $("#filesSort");
+    /* =====================================================
+       FILE SYSTEM
+       ===================================================== */
+
+    const folderData = {
+
+        home: {
+            name: "Home",
+            items: [
+                {
+                    name: "Documents",
+                    type: "folder",
+                    icon: "📁",
+                    target: "documents"
+                },
+                {
+                    name: "Pictures",
+                    type: "folder",
+                    icon: "📁",
+                    target: "pictures"
+                },
+                {
+                    name: "Projects",
+                    type: "folder",
+                    icon: "📁",
+                    target: "projects"
+                },
+                {
+                    name: "readme.txt",
+                    type: "file",
+                    icon: "📄"
+                }
+            ]
+        },
+
+        favorites: {
+            name: "Favorites",
+            items: [
+                {
+                    name: "Projects",
+                    type: "folder",
+                    icon: "📁",
+                    target: "projects"
+                },
+                {
+                    name: "Project Report.pdf",
+                    type: "file",
+                    icon: "📕"
+                },
+                {
+                    name: "readme.txt",
+                    type: "file",
+                    icon: "📄"
+                }
+            ]
+        },
+
+        documents: {
+            name: "Documents",
+            items: [
+                {
+                    name: "Web Technology",
+                    type: "folder",
+                    icon: "📁",
+                    target: "web"
+                },
+                {
+                    name: "DBMS",
+                    type: "folder",
+                    icon: "📁",
+                    target: "dbms"
+                },
+                {
+                    name: "Project Report",
+                    type: "file",
+                    icon: "📄"
+                },
+                {
+                    name: "Viva Questions",
+                    type: "file",
+                    icon: "📄"
+                }
+            ]
+        },
+
+        pictures: {
+            name: "Pictures",
+            items: [
+                {
+                    name: "ORBIT Wallpaper",
+                    type: "file",
+                    icon: "🖼️"
+                },
+                {
+                    name: "Profile",
+                    type: "file",
+                    icon: "🖼️"
+                },
+                {
+                    name: "Screenshots",
+                    type: "folder",
+                    icon: "📁",
+                    target: "screenshots"
+                }
+            ]
+        },
+
+        music: {
+            name: "Music",
+            items: [
+                {
+                    name: "Focus Mode",
+                    type: "file",
+                    icon: "🎵"
+                },
+                {
+                    name: "Ambient Orbit",
+                    type: "file",
+                    icon: "🎵"
+                },
+                {
+                    name: "Study Session",
+                    type: "file",
+                    icon: "🎵"
+                }
+            ]
+        },
+
+        projects: {
+            name: "Projects",
+            items: [
+                {
+                    name: "ORBIT OS",
+                    type: "folder",
+                    icon: "📁",
+                    target: "orbit"
+                },
+                {
+                    name: "College Project",
+                    type: "folder",
+                    icon: "📁",
+                    target: "college"
+                },
+                {
+                    name: "project-notes.txt",
+                    type: "file",
+                    icon: "📄"
+                }
+            ]
+        },
+
+        web: {
+            name: "Web Technology",
+            items: [
+                {
+                    name: "HTML",
+                    type: "folder",
+                    icon: "📁",
+                    target: "html"
+                },
+                {
+                    name: "CSS",
+                    type: "folder",
+                    icon: "📁",
+                    target: "css"
+                },
+                {
+                    name: "JavaScript",
+                    type: "folder",
+                    icon: "📁",
+                    target: "javascript"
+                }
+            ]
+        },
+
+        dbms: {
+            name: "DBMS",
+            items: [
+                {
+                    name: "SQL Queries.sql",
+                    type: "file",
+                    icon: "📄"
+                },
+                {
+                    name: "ER Diagram",
+                    type: "file",
+                    icon: "🖼️"
+                },
+                {
+                    name: "Normalization",
+                    type: "file",
+                    icon: "📄"
+                }
+            ]
+        },
+
+        orbit: {
+            name: "ORBIT OS",
+            items: [
+                {
+                    name: "index.html",
+                    type: "file",
+                    icon: "🌐"
+                },
+                {
+                    name: "style.css",
+                    type: "file",
+                    icon: "🎨"
+                },
+                {
+                    name: "app.js",
+                    type: "file",
+                    icon: "⚙️"
+                }
+            ]
+        },
+
+        college: {
+            name: "College Project",
+            items: [
+                {
+                    name: "Documentation",
+                    type: "file",
+                    icon: "📄"
+                },
+                {
+                    name: "Presentation",
+                    type: "file",
+                    icon: "📊"
+                }
+            ]
+        },
+
+        html: {
+            name: "HTML",
+            items: [
+                {
+                    name: "index.html",
+                    type: "file",
+                    icon: "🌐"
+                }
+            ]
+        },
+
+        css: {
+            name: "CSS",
+            items: [
+                {
+                    name: "style.css",
+                    type: "file",
+                    icon: "🎨"
+                }
+            ]
+        },
+
+        javascript: {
+            name: "JavaScript",
+            items: [
+                {
+                    name: "app.js",
+                    type: "file",
+                    icon: "⚙️"
+                }
+            ]
+        },
+
+        screenshots: {
+            name: "Screenshots",
+            items: [
+                {
+                    name: "desktop.png",
+                    type: "file",
+                    icon: "🖼️"
+                },
+                {
+                    name: "lockscreen.png",
+                    type: "file",
+                    icon: "🖼️"
+                }
+            ]
+        }
+
+    };
+
+
+    const parentFolders = {
+
+        home: null,
+        favorites: null,
+        documents: "home",
+        pictures: "home",
+        music: "home",
+        projects: "home",
+        web: "documents",
+        dbms: "documents",
+        orbit: "projects",
+        college: "projects",
+        html: "web",
+        css: "web",
+        javascript: "web",
+        screenshots: "pictures"
+
+    };
+
+
+    let currentFolder = "home";
+    let searchQuery = "";
+    let sortMode = "name-asc";
+
+    const backHistory = [];
+    const forwardHistory = [];
+
+    let selectedItemId = null;
+    let selectedFolderId = "home";
+
+    let clipboard = null;
+
+    let windowZIndex = 500;
+
+    const dynamicWindows = new Map();
+    const taskbarApps = new Map();
+
+
+    /* =====================================================
+       BASIC UTILS
+       ===================================================== */
+
+    function escapeHtml(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    function generateId(prefix) {
+
+        return (
+            prefix +
+            "-" +
+            Date.now() +
+            "-" +
+            Math.random()
+                .toString(36)
+                .slice(2, 8)
+        );
+
+    }
+
+
+    function currentItems() {
+
+        return (
+            folderData[currentFolder]?.items ||
+            []
+        );
+
+    }
+
+
+    function selectedItem() {
+
+        if (!selectedItemId) {
+            return null;
+        }
+
+        return (
+            folderData[selectedFolderId]
+                ?.items
+                ?.find(
+                    item =>
+                        item._orbitId ===
+                        selectedItemId
+                ) ||
+            null
+        );
+
+    }
+
+
+    function ensureIds() {
+
+        Object.values(folderData)
+            .forEach(folder => {
+
+                folder.items.forEach(item => {
+
+                    if (!item._orbitId) {
+
+                        item._orbitId =
+                            generateId("item");
+
+                    }
+
+                });
+
+            });
+
+    }
+
+
+    function fileIcon(name) {
+
+        const lower =
+            String(name).toLowerCase();
+
+        if (
+            lower.endsWith(".html") ||
+            lower.endsWith(".htm")
+        ) return "🌐";
+
+        if (lower.endsWith(".css"))
+            return "🎨";
+
+        if (lower.endsWith(".js"))
+            return "⚙️";
+
+        if (lower.endsWith(".json"))
+            return "🧩";
+
+        if (lower.endsWith(".sql"))
+            return "🗄️";
+
+        if (
+            lower.endsWith(".png") ||
+            lower.endsWith(".jpg") ||
+            lower.endsWith(".jpeg") ||
+            lower.endsWith(".webp")
+        ) return "🖼️";
+
+        if (
+            lower.endsWith(".mp3") ||
+            lower.endsWith(".wav")
+        ) return "🎵";
+
+        if (lower.endsWith(".pdf"))
+            return "📕";
+
+        if (lower.endsWith(".md"))
+            return "📘";
+
+        return "📄";
+
+    }
+
+
+    /* =====================================================
+       CLOCK
+       ===================================================== */
+
+    function updateClock() {
+
+        const now = new Date();
+
+        const time =
+            now.toLocaleTimeString(
+                "en-IN",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true
+                }
+            );
+
+        const date =
+            now.toLocaleDateString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric"
+                }
+            );
+
+        const lockDateText =
+            now.toLocaleDateString(
+                "en-IN",
+                {
+                    weekday: "long",
+                    month: "long",
+                    day: "numeric"
+                }
+            );
+
+        if (desktopTopTime)
+            desktopTopTime.textContent =
+                time;
+
+        if (desktopTaskbarTime)
+            desktopTaskbarTime.textContent =
+                time;
+
+        if (desktopTaskbarDate)
+            desktopTaskbarDate.textContent =
+                date;
+
+        if (lockTime)
+            lockTime.textContent =
+                time;
+
+        if (lockDate)
+            lockDate.textContent =
+                lockDateText;
+
+    }
+
+    updateClock();
+
+    setInterval(
+        updateClock,
+        1000
+    );
 
 
     /* =====================================================
        BOOT SCREEN
        ===================================================== */
+
+    let bootProgress = 0;
 
     const bootMessages = [
         "Initializing core services...",
@@ -145,258 +610,121 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
 
-    let progress = 0;
+    function updateBoot() {
 
+        bootProgress += 1;
 
-    const bootTimer =
-        setInterval(() => {
+        if (progressBar)
+            progressBar.style.width =
+                bootProgress + "%";
 
-            progress++;
+        if (loadingPercent)
+            loadingPercent.textContent =
+                bootProgress + "%";
 
+        let index = 0;
 
-            if (progressBar) {
-                progressBar.style.width =
-                    `${progress}%`;
-            }
+        if (bootProgress >= 90)
+            index = 5;
+        else if (bootProgress >= 75)
+            index = 4;
+        else if (bootProgress >= 60)
+            index = 3;
+        else if (bootProgress >= 40)
+            index = 2;
+        else if (bootProgress >= 20)
+            index = 1;
 
+        if (systemMessage)
+            systemMessage.textContent =
+                bootMessages[index];
 
-            if (loadingPercent) {
-                loadingPercent.textContent =
-                    `${progress}%`;
-            }
+        if (statusText) {
 
+            if (bootProgress < 20)
+                statusText.textContent =
+                    "Starting system...";
 
-            if (progress < 20) {
+            else if (bootProgress < 40)
+                statusText.textContent =
+                    "Loading components...";
 
-                if (statusText) {
-                    statusText.textContent =
-                        "Starting system...";
-                }
+            else if (bootProgress < 60)
+                statusText.textContent =
+                    "Checking system...";
 
-                if (systemMessage) {
-                    systemMessage.textContent =
-                        bootMessages[0];
-                }
+            else if (bootProgress < 75)
+                statusText.textContent =
+                    "Preparing environment...";
 
-            }
+            else if (bootProgress < 90)
+                statusText.textContent =
+                    "Starting services...";
 
-            else if (progress < 40) {
+            else
+                statusText.textContent =
+                    "Almost ready...";
 
-                if (statusText) {
-                    statusText.textContent =
-                        "Loading components...";
-                }
-
-                if (systemMessage) {
-                    systemMessage.textContent =
-                        bootMessages[1];
-                }
-
-            }
-
-            else if (progress < 60) {
-
-                if (statusText) {
-                    statusText.textContent =
-                        "Checking system...";
-                }
-
-                if (systemMessage) {
-                    systemMessage.textContent =
-                        bootMessages[2];
-                }
-
-            }
-
-            else if (progress < 75) {
-
-                if (statusText) {
-                    statusText.textContent =
-                        "Preparing environment...";
-                }
-
-                if (systemMessage) {
-                    systemMessage.textContent =
-                        bootMessages[3];
-                }
-
-            }
-
-            else if (progress < 90) {
-
-                if (statusText) {
-                    statusText.textContent =
-                        "Starting services...";
-                }
-
-                if (systemMessage) {
-                    systemMessage.textContent =
-                        bootMessages[4];
-                }
-
-            }
-
-            else if (progress < 100) {
-
-                if (statusText) {
-                    statusText.textContent =
-                        "Almost ready...";
-                }
-
-                if (systemMessage) {
-                    systemMessage.textContent =
-                        bootMessages[5];
-                }
-
-            }
-
-            else {
-
-                clearInterval(
-                    bootTimer
-                );
-
-                if (statusText) {
-                    statusText.textContent =
-                        "System ready";
-                }
-
-
-                if (systemMessage) {
-                    systemMessage.textContent =
-                        bootMessages[6];
-                }
-
-
-                if (bootContent) {
-                    bootContent.classList.add(
-                        "ready"
-                    );
-                }
-
-
-                setTimeout(() => {
-
-                    if (bootScreen) {
-                        bootScreen.classList.add(
-                            "hidden"
-                        );
-                    }
-
-
-                    if (lockScreen) {
-                        lockScreen.classList.add(
-                            "active"
-                        );
-                    }
-
-
-                    if (pinInput) {
-                        pinInput.focus();
-                    }
-
-                }, 700);
-
-            }
-
-        }, 35);
-
-
-    /* =====================================================
-       LOCK SCREEN CLOCK
-       ===================================================== */
-
-    function updateLockClock() {
-
-        if (!lockTime || !lockDate) {
-            return;
         }
 
 
-        const now =
-            new Date();
+        if (bootProgress >= 100) {
 
+            clearInterval(bootTimer);
 
-        lockTime.textContent =
-            now.toLocaleTimeString(
-                "en-IN",
-                {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true
-                }
-            );
+            if (bootContent)
+                bootContent.classList.add(
+                    "ready"
+                );
 
+            if (statusText)
+                statusText.textContent =
+                    "System ready";
 
-        lockDate.textContent =
-            now.toLocaleDateString(
-                "en-IN",
-                {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric"
-                }
-            );
+            if (systemMessage)
+                systemMessage.textContent =
+                    "System ready.";
+
+            setTimeout(() => {
+
+                if (bootScreen)
+                    bootScreen.classList.add(
+                        "hidden"
+                    );
+
+                if (lockScreen)
+                    lockScreen.classList.add(
+                        "active"
+                    );
+
+                pinInput?.focus();
+
+            }, 600);
+
+        }
 
     }
 
 
-    updateLockClock();
-
-
-    setInterval(
-        updateLockClock,
-        1000
-    );
-
-
-    /* =====================================================
-       PIN VISIBILITY
-       ===================================================== */
-
-    togglePin?.addEventListener(
-        "click",
-        () => {
-
-            if (!pinInput) {
-                return;
-            }
-
-
-            const isPassword =
-                pinInput.type === "password";
-
-
-            pinInput.type =
-                isPassword
-                    ? "text"
-                    : "password";
-
-
-            togglePin.textContent =
-                isPassword
-                    ? "◌"
-                    : "◉";
-
-        }
-    );
+    const bootTimer =
+        setInterval(
+            updateBoot,
+            35
+        );
 
 
     /* =====================================================
-       PIN ERROR
+       PIN
        ===================================================== */
 
     function showPinError(message) {
 
-        if (pinError) {
+        if (pinError)
             pinError.textContent =
                 message;
-        }
-
 
         const wrapper =
             $(".pin-input-wrapper");
-
 
         if (wrapper) {
 
@@ -404,9 +732,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "shake"
             );
 
-
             void wrapper.offsetWidth;
-
 
             wrapper.classList.add(
                 "shake"
@@ -417,22 +743,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* =====================================================
-       UNLOCK
-       ===================================================== */
-
     function unlockSystem() {
 
-        if (!pinInput) {
-            return;
-        }
+        const value =
+            pinInput?.value.trim() ||
+            "";
 
-
-        const enteredPin =
-            pinInput.value.trim();
-
-
-        if (!enteredPin) {
+        if (!value) {
 
             showPinError(
                 "Please enter your PIN."
@@ -442,45 +759,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
-
-        if (enteredPin !== "1234") {
+        if (value !== "1234") {
 
             showPinError(
                 "Incorrect PIN. Try again."
             );
 
-
-            pinInput.value =
-                "";
-
+            pinInput.value = "";
 
             pinInput.focus();
-
 
             return;
 
         }
 
-
-        if (pinError) {
-            pinError.textContent =
-                "";
-        }
-
+        if (pinError)
+            pinError.textContent = "";
 
         if (unlockButton) {
-
-            unlockButton.innerHTML =
-                "<span>Unlocking...</span>";
-
 
             unlockButton.disabled =
                 true;
 
+            unlockButton.innerHTML =
+                "<span>Unlocking...</span>";
+
         }
 
-
         if (osDesktop) {
+
+            osDesktop.style.display =
+                "";
 
             osDesktop.classList.add(
                 "active"
@@ -488,24 +797,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
-
-        if (lockScreen) {
-
+        if (lockScreen)
             lockScreen.classList.add(
                 "unlocking"
             );
 
-        }
-
-
         setTimeout(() => {
 
-            if (lockScreen) {
-
+            if (lockScreen)
                 lockScreen.style.display =
                     "none";
-
-            }
 
         }, 800);
 
@@ -522,9 +823,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "keydown",
         event => {
 
-            if (event.key === "Enter") {
+            if (event.key === "Enter")
                 unlockSystem();
-            }
 
         }
     );
@@ -544,614 +844,123 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    /* =====================================================
-       DESKTOP CLOCK
-       ===================================================== */
+    togglePin?.addEventListener(
+        "click",
+        () => {
 
-    function updateDesktopClock() {
+            if (pinInput.type === "password") {
 
-        const now =
-            new Date();
+                pinInput.type = "text";
 
+                togglePin.textContent =
+                    "◌";
 
-        const time =
-            now.toLocaleTimeString(
-                "en-IN",
-                {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true
-                }
-            );
+            } else {
 
+                pinInput.type =
+                    "password";
 
-        const date =
-            now.toLocaleDateString(
-                "en-IN",
-                {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric"
-                }
-            );
+                togglePin.textContent =
+                    "◉";
 
+            }
 
-        if (desktopTopTime) {
-            desktopTopTime.textContent =
-                time;
         }
-
-
-        if (desktopTaskbarTime) {
-            desktopTaskbarTime.textContent =
-                time;
-        }
-
-
-        if (desktopTaskbarDate) {
-            desktopTaskbarDate.textContent =
-                date;
-        }
-
-    }
-
-
-    updateDesktopClock();
-
-
-    setInterval(
-        updateDesktopClock,
-        1000
     );
 
 
     /* =====================================================
-       FILESYSTEM DATA
+       FILE STORAGE
        ===================================================== */
 
-    const folderData = {
-
-        home: {
-            name: "Home",
-
-            items: [
-                {
-                    name: "Documents",
-                    type: "folder",
-                    icon: "📁",
-                    target: "documents"
-                },
-
-                {
-                    name: "Pictures",
-                    type: "folder",
-                    icon: "📁",
-                    target: "pictures"
-                },
-
-                {
-                    name: "Projects",
-                    type: "folder",
-                    icon: "📁",
-                    target: "projects"
-                },
-
-                {
-                    name: "readme.txt",
-                    type: "file",
-                    icon: "📄"
-                }
-            ]
-        },
-
-
-        favorites: {
-            name: "Favorites",
-
-            items: [
-                {
-                    name: "Projects",
-                    type: "folder",
-                    icon: "📁",
-                    target: "projects"
-                },
-
-                {
-                    name: "Project Report.pdf",
-                    type: "file",
-                    icon: "📕"
-                },
-
-                {
-                    name: "readme.txt",
-                    type: "file",
-                    icon: "📄"
-                }
-            ]
-        },
-
-
-        documents: {
-            name: "Documents",
-
-            items: [
-                {
-                    name: "Web Technology",
-                    type: "folder",
-                    icon: "📁",
-                    target: "web"
-                },
-
-                {
-                    name: "DBMS",
-                    type: "folder",
-                    icon: "📁",
-                    target: "dbms"
-                },
-
-                {
-                    name: "Project Report",
-                    type: "file",
-                    icon: "📄"
-                },
-
-                {
-                    name: "Viva Questions",
-                    type: "file",
-                    icon: "📄"
-                }
-            ]
-        },
-
-
-        pictures: {
-            name: "Pictures",
-
-            items: [
-                {
-                    name: "ORBIT Wallpaper",
-                    type: "file",
-                    icon: "🖼️"
-                },
-
-                {
-                    name: "Profile",
-                    type: "file",
-                    icon: "🖼️"
-                },
-
-                {
-                    name: "Screenshots",
-                    type: "folder",
-                    icon: "📁",
-                    target: "screenshots"
-                }
-            ]
-        },
-
-
-        music: {
-            name: "Music",
-
-            items: [
-                {
-                    name: "Focus Mode",
-                    type: "file",
-                    icon: "🎵"
-                },
-
-                {
-                    name: "Ambient Orbit",
-                    type: "file",
-                    icon: "🎵"
-                },
-
-                {
-                    name: "Study Session",
-                    type: "file",
-                    icon: "🎵"
-                }
-            ]
-        },
-
-
-        projects: {
-            name: "Projects",
-
-            items: [
-                {
-                    name: "ORBIT OS",
-                    type: "folder",
-                    icon: "📁",
-                    target: "orbit"
-                },
-
-                {
-                    name: "College Project",
-                    type: "folder",
-                    icon: "📁",
-                    target: "college"
-                },
-
-                {
-                    name: "project-notes.txt",
-                    type: "file",
-                    icon: "📄"
-                }
-            ]
-        },
-
-
-        web: {
-            name: "Web Technology",
-
-            items: [
-                {
-                    name: "HTML",
-                    type: "folder",
-                    icon: "📁",
-                    target: "html"
-                },
-
-                {
-                    name: "CSS",
-                    type: "folder",
-                    icon: "📁",
-                    target: "css"
-                },
-
-                {
-                    name: "JavaScript",
-                    type: "folder",
-                    icon: "📁",
-                    target: "javascript"
-                }
-            ]
-        },
-
-
-        dbms: {
-            name: "DBMS",
-
-            items: [
-                {
-                    name: "SQL Queries.sql",
-                    type: "file",
-                    icon: "📄"
-                },
-
-                {
-                    name: "ER Diagram",
-                    type: "file",
-                    icon: "🖼️"
-                },
-
-                {
-                    name: "Normalization",
-                    type: "file",
-                    icon: "📄"
-                }
-            ]
-        },
-
-
-        orbit: {
-            name: "ORBIT OS",
-
-            items: [
-                {
-                    name: "index.html",
-                    type: "file",
-                    icon: "🌐"
-                },
-
-                {
-                    name: "style.css",
-                    type: "file",
-                    icon: "🎨"
-                },
-
-                {
-                    name: "app.js",
-                    type: "file",
-                    icon: "⚙️"
-                }
-            ]
-        },
-
-
-        college: {
-            name: "College Project",
-
-            items: [
-                {
-                    name: "Documentation",
-                    type: "file",
-                    icon: "📄"
-                },
-
-                {
-                    name: "Presentation",
-                    type: "file",
-                    icon: "📊"
-                }
-            ]
-        },
-
-
-        html: {
-            name: "HTML",
-
-            items: [
-                {
-                    name: "index.html",
-                    type: "file",
-                    icon: "🌐"
-                }
-            ]
-        },
-
-
-        css: {
-            name: "CSS",
-
-            items: [
-                {
-                    name: "style.css",
-                    type: "file",
-                    icon: "🎨"
-                }
-            ]
-        },
-
-
-        javascript: {
-            name: "JavaScript",
-
-            items: [
-                {
-                    name: "app.js",
-                    type: "file",
-                    icon: "⚙️"
-                }
-            ]
-        },
-
-
-        screenshots: {
-            name: "Screenshots",
-
-            items: [
-                {
-                    name: "desktop.png",
-                    type: "file",
-                    icon: "🖼️"
-                },
-
-                {
-                    name: "lockscreen.png",
-                    type: "file",
-                    icon: "🖼️"
-                }
-            ]
-        }
-
-    };
-
-
-    /* =====================================================
-       FILE STATE
-       ===================================================== */
-
-    let currentFolder =
-        "home";
-
-    let searchQuery =
-        "";
-
-    let sortMode =
-        "name-asc";
-
-
-    const backHistory =
-        [];
-
-    const forwardHistory =
-        [];
-
-
-    /* =====================================================
-       PARENT FOLDERS
-       ===================================================== */
-
-    const parentFolders = {
-
-        home: null,
-        favorites: null,
-
-        documents: "home",
-        pictures: "home",
-        music: "home",
-        projects: "home",
-
-        web: "documents",
-        dbms: "documents",
-
-        orbit: "projects",
-        college: "projects",
-
-        html: "web",
-        css: "web",
-        javascript: "web",
-
-        screenshots: "pictures"
-
-    };
-
-
-    /* =====================================================
-       SELECTION STATE
-       ===================================================== */
-
-    let selectedFileCard =
-        null;
-
-    let selectedFileData =
-        null;
-
-
-    function clearFileSelection() {
-
-        selectedFileCard?.classList.remove(
-            "selected"
-        );
-
-
-        selectedFileCard =
-            null;
-
-
-        selectedFileData =
-            null;
-
-    }
-
-
-    function getFileData(card) {
-
-        if (!card) {
-            return null;
-        }
-
-
-        return {
-
-            name:
-                $(".file-card-name", card)?.textContent ||
-                "Unknown",
-
-            type:
-                card.dataset.type ||
-                "file",
-
-            target:
-                card.dataset.target ||
-                null
-
-        };
-
-    }
-
-
-    /* =====================================================
-       CONTEXT MENU
-       ===================================================== */
-
-    let fileContextMenu =
-        $("#fileContextMenu");
-
-
-    /*
-     * Create the menu automatically if
-     * it is not present in index.html.
-     */
-
-    if (!fileContextMenu) {
-
-        fileContextMenu =
-            document.createElement(
-                "div"
+    function saveFileSystem() {
+
+        try {
+
+            localStorage.setItem(
+                FILES_KEY,
+                JSON.stringify({
+                    folders: folderData,
+                    parents: parentFolders
+                })
             );
 
+        } catch (error) {
 
-        fileContextMenu.id =
-            "fileContextMenu";
+            console.error(
+                "ORBIT file save error:",
+                error
+            );
 
-
-        fileContextMenu.className =
-            "file-context-menu";
-
-
-        fileContextMenu.innerHTML = `
-
-            <button
-                type="button"
-                data-file-action="open"
-            >
-                Open
-            </button>
-
-            <button
-                type="button"
-                data-file-action="rename"
-            >
-                Rename
-            </button>
-
-            <button
-                type="button"
-                data-file-action="copy"
-            >
-                Copy
-            </button>
-
-            <button
-                type="button"
-                data-file-action="cut"
-            >
-                Cut
-            </button>
-
-            <button
-                type="button"
-                data-file-action="delete"
-            >
-                Delete
-            </button>
-
-            <div class="context-divider"></div>
-
-            <button
-                type="button"
-                data-file-action="properties"
-            >
-                Properties
-            </button>
-
-        `;
-
-
-        document.body.appendChild(
-            fileContextMenu
-        );
+        }
 
     }
 
 
-    function closeFileContextMenu() {
+    function loadFileSystem() {
 
-        fileContextMenu?.classList.remove(
-            "open"
-        );
+        try {
+
+            const raw =
+                localStorage.getItem(
+                    FILES_KEY
+                );
+
+            if (!raw)
+                return;
+
+            const data =
+                JSON.parse(raw);
+
+            if (
+                !data ||
+                !data.folders
+            )
+                return;
+
+            Object.keys(folderData)
+                .forEach(
+                    key =>
+                        delete folderData[key]
+                );
+
+            Object.assign(
+                folderData,
+                data.folders
+            );
+
+            Object.keys(parentFolders)
+                .forEach(
+                    key =>
+                        delete parentFolders[key]
+                );
+
+            Object.assign(
+                parentFolders,
+                data.parents || {}
+            );
+
+        } catch (error) {
+
+            console.error(
+                "ORBIT file restore error:",
+                error
+            );
+
+        }
 
     }
 
 
     /* =====================================================
-       FOLDER PATH
+       FILE NAVIGATION
        ===================================================== */
 
-    function getFolderPath(
-        folderId
-    ) {
+    function folderPath(folderId) {
 
-        const path =
-            [];
+        const path = [];
 
-
-        let current =
-            folderId;
-
+        let current = folderId;
 
         while (
             current !== null &&
@@ -1162,400 +971,240 @@ document.addEventListener("DOMContentLoaded", () => {
                 current
             );
 
-
             current =
                 parentFolders[current];
 
         }
-
 
         return path;
 
     }
 
 
-    /* =====================================================
-       SIDEBAR ACTIVE STATE
-       ===================================================== */
+    function renderBreadcrumbs() {
 
-    function updateSidebarActive(
-        folderId
-    ) {
+        if (!filesBreadcrumb)
+            return;
 
-        sidebarItems.forEach(
-            item => {
+        filesBreadcrumb.innerHTML = "";
 
-                item.classList.toggle(
-                    "active",
-                    item.dataset.folder ===
-                    folderId
-                );
+        folderPath(currentFolder)
+            .forEach(
+                (folderId, index, array) => {
 
-            }
-        );
+                    const folder =
+                        folderData[folderId];
+
+                    if (!folder)
+                        return;
+
+                    if (index > 0) {
+
+                        const separator =
+                            document.createElement(
+                                "span"
+                            );
+
+                        separator.className =
+                            "breadcrumb-separator";
+
+                        separator.textContent =
+                            "/";
+
+                        filesBreadcrumb.appendChild(
+                            separator
+                        );
+
+                    }
+
+                    const button =
+                        document.createElement(
+                            "button"
+                        );
+
+                    button.type =
+                        "button";
+
+                    button.className =
+                        "breadcrumb-item";
+
+                    button.dataset.folder =
+                        folderId;
+
+                    button.textContent =
+                        folder.name;
+
+                    if (
+                        index ===
+                        array.length - 1
+                    ) {
+
+                        button.classList.add(
+                            "current"
+                        );
+
+                        button.disabled =
+                            true;
+
+                    }
+
+                    filesBreadcrumb.appendChild(
+                        button
+                    );
+
+                }
+            );
 
     }
 
-
-    /* =====================================================
-       BACK / FORWARD BUTTON STATE
-       ===================================================== */
 
     function updateNavigationButtons() {
 
-        if (filesBackButton) {
-
+        if (filesBackButton)
             filesBackButton.disabled =
                 backHistory.length === 0;
 
-        }
-
-
-        if (filesForwardButton) {
-
+        if (filesForwardButton)
             filesForwardButton.disabled =
                 forwardHistory.length === 0;
 
-        }
-
     }
 
 
-    /* =====================================================
-       BREADCRUMBS
-       ===================================================== */
+    function clearFileSelection() {
 
-    function renderBreadcrumbs() {
-
-        if (!filesBreadcrumb) {
-            return;
-        }
-
-
-        filesBreadcrumb.innerHTML =
-            "";
-
-
-        const path =
-            getFolderPath(
-                currentFolder
+        $$(".file-card.selected")
+            .forEach(
+                card =>
+                    card.classList.remove(
+                        "selected"
+                    )
             );
 
+        selectedItemId =
+            null;
 
-        path.forEach(
-            (
-                folderId,
-                index
-            ) => {
-
-                const folder =
-                    folderData[folderId];
-
-
-                if (!folder) {
-                    return;
-                }
-
-
-                if (index > 0) {
-
-                    const separator =
-                        document.createElement(
-                            "span"
-                        );
-
-
-                    separator.className =
-                        "breadcrumb-separator";
-
-
-                    separator.textContent =
-                        "/";
-
-
-                    filesBreadcrumb.appendChild(
-                        separator
-                    );
-
-                }
-
-
-                const button =
-                    document.createElement(
-                        "button"
-                    );
-
-
-                button.type =
-                    "button";
-
-
-                button.className =
-                    "breadcrumb-item";
-
-
-                button.textContent =
-                    folder.name;
-
-
-                button.dataset.folder =
-                    folderId;
-
-
-                if (
-                    index ===
-                    path.length - 1
-                ) {
-
-                    button.classList.add(
-                        "current"
-                    );
-
-
-                    button.disabled =
-                        true;
-
-                }
-
-
-                filesBreadcrumb.appendChild(
-                    button
-                );
-
-            }
-        );
+        selectedFolderId =
+            currentFolder;
 
     }
 
 
-    /* =====================================================
-       SEARCH + SORT
-       ===================================================== */
+    function selectFileCard(card) {
 
-    function getVisibleItems(
-        items
-    ) {
+        clearFileSelection();
+
+        if (!card)
+            return;
+
+        card.classList.add(
+            "selected"
+        );
+
+        selectedItemId =
+            card.dataset.orbitId;
+
+        selectedFolderId =
+            currentFolder;
+
+    }
+
+
+    function renderFolder(folderId) {
+
+        const folder =
+            folderData[folderId];
+
+        if (!folder || !fileGrid)
+            return;
+
+        currentFolder =
+            folderId;
+
+        clearFileSelection();
+
+        let items =
+            [...folder.items];
 
         const query =
             searchQuery
                 .trim()
                 .toLowerCase();
 
+        if (query) {
 
-        let visibleItems =
-            query
-                ? items.filter(
+            items =
+                items.filter(
                     item =>
                         item.name
                             .toLowerCase()
-                            .includes(
-                                query
-                            )
-                )
-                : [...items];
-
-
-        if (
-            sortMode ===
-            "name-asc"
-        ) {
-
-            visibleItems.sort(
-                (a, b) =>
-                    a.name.localeCompare(
-                        b.name,
-                        undefined,
-                        {
-                            sensitivity:
-                                "base"
-                        }
-                    )
-            );
+                            .includes(query)
+                );
 
         }
 
 
-        else if (
-            sortMode ===
-            "name-desc"
-        ) {
+        items.sort(
+            (a, b) => {
 
-            visibleItems.sort(
-                (a, b) =>
-                    b.name.localeCompare(
-                        a.name,
-                        undefined,
-                        {
-                            sensitivity:
-                                "base"
-                        }
-                    )
-            );
+                if (
+                    sortMode ===
+                    "name-desc"
+                ) {
 
-        }
-
-
-        else if (
-            sortMode ===
-            "type"
-        ) {
-
-            visibleItems.sort(
-                (a, b) => {
-
-                    if (
-                        a.type ===
-                        b.type
-                    ) {
-
-                        return a.name.localeCompare(
-                            b.name,
-                            undefined,
-                            {
-                                sensitivity:
-                                    "base"
-                            }
-                        );
-
-                    }
-
-
-                    return a.type ===
-                        "folder"
-                        ? -1
-                        : 1;
+                    return b.name.localeCompare(
+                        a.name
+                    );
 
                 }
-            );
 
-        }
+                if (
+                    sortMode ===
+                    "type"
+                ) {
 
+                    if (a.type !== b.type)
+                        return a.type ===
+                            "folder"
+                            ? -1
+                            : 1;
 
-        return visibleItems;
+                }
 
-    }
+                return a.name.localeCompare(
+                    b.name
+                );
 
-
-    /* =====================================================
-       EMPTY STATE
-       ===================================================== */
-
-    function renderEmptyState() {
-
-        const emptyState =
-            document.createElement(
-                "div"
-            );
-
-
-        emptyState.className =
-            "files-empty";
-
-
-        emptyState.innerHTML = `
-
-            <div class="files-empty-icon">
-                ⌕
-            </div>
-
-            <h3>
-                No results found
-            </h3>
-
-            <p>
-                Try a different search term.
-            </p>
-
-        `;
-
-
-        fileGrid?.appendChild(
-            emptyState
+            }
         );
 
-    }
 
-
-    /* =====================================================
-       RENDER FOLDER
-       ===================================================== */
-
-    function renderFolder(
-        folderId
-    ) {
-
-        const folder =
-            folderData[folderId];
-
-
-        if (
-            !folder ||
-            !fileGrid
-        ) {
-
-            return;
-
-        }
-
-
-        currentFolder =
-            folderId;
-
-
-        const visibleItems =
-            getVisibleItems(
-                folder.items
-            );
-
-
-        /* Heading */
-
-        if (filesHeading) {
-
+        if (filesHeading)
             filesHeading.textContent =
                 folder.name;
-
-        }
-
-
-        /* Count */
 
         if (filesCount) {
 
             filesCount.textContent =
-                searchQuery.trim()
-                    ? `${visibleItems.length} of ${folder.items.length} items`
-                    : `${visibleItems.length} items`;
+                query
+                    ? `${items.length} of ${folder.items.length} items`
+                    : `${items.length} items`;
 
         }
 
-
-        /* Breadcrumb */
-
         renderBreadcrumbs();
 
+        fileGrid.innerHTML = "";
 
-        /* Sidebar */
+        if (!items.length) {
 
-        updateSidebarActive(
-            folderId
-        );
-
-
-        /* Clear existing cards */
-
-        fileGrid.innerHTML =
-            "";
-
-
-        /* No results */
-
-        if (
-            visibleItems.length ===
-            0
-        ) {
-
-            renderEmptyState();
+            fileGrid.innerHTML = `
+                <div class="files-empty">
+                    <div class="files-empty-icon">⌕</div>
+                    <h3>No results found</h3>
+                    <p>Try a different search term.</p>
+                </div>
+            `;
 
             updateNavigationButtons();
 
@@ -1564,97 +1213,83 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /* Create file cards */
+        items.forEach(item => {
 
-        visibleItems.forEach(
-            item => {
-
-                const card =
-                    document.createElement(
-                        "button"
-                    );
-
-
-                card.type =
-                    "button";
-
-
-                card.className =
-                    "file-card";
-
-
-                card.dataset.type =
-                    item.type;
-
-
-                if (item.target) {
-
-                    card.dataset.target =
-                        item.target;
-
-                }
-
-
-                const icon =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                icon.className =
-                    "file-card-icon";
-
-
-                icon.classList.add(
-                    item.type === "folder"
-                        ? "folder-icon"
-                        : "document-icon"
+            const card =
+                document.createElement(
+                    "button"
                 );
 
+            card.type =
+                "button";
 
-                icon.textContent =
-                    item.icon;
+            card.className =
+                "file-card";
 
+            card.dataset.type =
+                item.type;
 
-                const name =
-                    document.createElement(
-                        "div"
-                    );
+            card.dataset.orbitId =
+                item._orbitId;
 
-
-                name.className =
-                    "file-card-name";
-
-
-                name.textContent =
-                    item.name;
+            if (item.target)
+                card.dataset.target =
+                    item.target;
 
 
-                const type =
-                    document.createElement(
-                        "small"
-                    );
-
-
-                type.textContent =
-                    item.type === "folder"
-                        ? "Folder"
-                        : "File";
-
-
-                card.append(
-                    icon,
-                    name,
-                    type
+            const icon =
+                document.createElement(
+                    "div"
                 );
 
+            icon.className =
+                "file-card-icon";
 
-                fileGrid.appendChild(
-                    card
+            icon.classList.add(
+                item.type === "folder"
+                    ? "folder-icon"
+                    : "document-icon"
+            );
+
+            icon.textContent =
+                item.icon ||
+                fileIcon(item.name);
+
+
+            const name =
+                document.createElement(
+                    "div"
                 );
 
-            }
-        );
+            name.className =
+                "file-card-name";
+
+            name.textContent =
+                item.name;
+
+
+            const type =
+                document.createElement(
+                    "small"
+                );
+
+            type.textContent =
+                item.type === "folder"
+                    ? "Folder"
+                    : "File";
+
+
+            card.append(
+                icon,
+                name,
+                type
+            );
+
+            fileGrid.appendChild(
+                card
+            );
+
+        });
 
 
         updateNavigationButtons();
@@ -1662,47 +1297,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* =====================================================
-       NAVIGATION
-       ===================================================== */
-
     function navigateTo(
         folderId,
-        addHistory = true
+        saveHistory = true
     ) {
 
-        if (!folderData[folderId]) {
+        if (!folderData[folderId])
             return;
-        }
-
 
         if (
             folderId ===
             currentFolder
-        ) {
-
+        )
             return;
 
-        }
-
-
-        if (addHistory) {
+        if (saveHistory) {
 
             backHistory.push(
                 currentFolder
             );
 
-
             forwardHistory.length =
                 0;
 
         }
-
-
-        clearFileSelection();
-
-        closeFileContextMenu();
-
 
         renderFolder(
             folderId
@@ -1711,413 +1329,49 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* =====================================================
-       FILE SELECTION
-       ===================================================== */
-
-    fileGrid?.addEventListener(
+    filesBackButton?.addEventListener(
         "click",
-        event => {
+        () => {
 
-            const card =
-                event.target.closest(
-                    ".file-card"
-                );
-
-
-            if (!card) {
-
-                clearFileSelection();
-
+            if (!backHistory.length)
                 return;
 
-            }
-
-
-            closeFileContextMenu();
-
-
-            if (
-                selectedFileCard &&
-                selectedFileCard !== card
-            ) {
-
-                selectedFileCard.classList.remove(
-                    "selected"
-                );
-
-            }
-
-
-            selectedFileCard =
-                card;
-
-
-            selectedFileCard.classList.add(
-                "selected"
+            forwardHistory.push(
+                currentFolder
             );
 
+            const previous =
+                backHistory.pop();
 
-            selectedFileData =
-                getFileData(
-                    card
-                );
-
-        }
-    );
-
-
-    /* =====================================================
-       DOUBLE CLICK FOLDER
-       ===================================================== */
-
-    fileGrid?.addEventListener(
-        "dblclick",
-        event => {
-
-            const card =
-                event.target.closest(
-                    ".file-card"
-                );
-
-
-            if (!card) {
-                return;
-            }
-
-
-            if (
-                card.dataset.type !==
-                "folder"
-            ) {
-
-                return;
-
-            }
-
-
-            const target =
-                card.dataset.target;
-
-
-            if (!target) {
-                return;
-            }
-
-
-            navigateTo(
-                target
+            renderFolder(
+                previous
             );
 
         }
     );
 
 
-    /* =====================================================
-       RIGHT CLICK CONTEXT MENU
-       ===================================================== */
-
-    fileGrid?.addEventListener(
-        "contextmenu",
-        event => {
-
-            const card =
-                event.target.closest(
-                    ".file-card"
-                );
-
-
-            if (!card) {
-                return;
-            }
-
-
-            event.preventDefault();
-
-
-            if (
-                selectedFileCard &&
-                selectedFileCard !== card
-            ) {
-
-                selectedFileCard.classList.remove(
-                    "selected"
-                );
-
-            }
-
-
-            selectedFileCard =
-                card;
-
-
-            selectedFileCard.classList.add(
-                "selected"
-            );
-
-
-            selectedFileData =
-                getFileData(
-                    card
-                );
-
-
-            const menuWidth =
-                165;
-
-
-            const menuHeight =
-                245;
-
-
-            let x =
-                event.clientX;
-
-
-            let y =
-                event.clientY;
-
-
-            if (
-                x + menuWidth >
-                window.innerWidth
-            ) {
-
-                x =
-                    window.innerWidth -
-                    menuWidth -
-                    10;
-
-            }
-
-
-            if (
-                y + menuHeight >
-                window.innerHeight
-            ) {
-
-                y =
-                    window.innerHeight -
-                    menuHeight -
-                    10;
-
-            }
-
-
-            fileContextMenu.style.left =
-                `${x}px`;
-
-
-            fileContextMenu.style.top =
-                `${y}px`;
-
-
-            fileContextMenu.classList.add(
-                "open"
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-       CONTEXT MENU ACTIONS
-       ===================================================== */
-
-    fileContextMenu?.addEventListener(
+    filesForwardButton?.addEventListener(
         "click",
-        event => {
+        () => {
 
-            const actionButton =
-                event.target.closest(
-                    "[data-file-action]"
-                );
-
-
-            if (!actionButton) {
+            if (!forwardHistory.length)
                 return;
-            }
 
+            backHistory.push(
+                currentFolder
+            );
 
-            if (!selectedFileData) {
-                return;
-            }
+            const next =
+                forwardHistory.pop();
 
-
-            const action =
-                actionButton.dataset.fileAction;
-
-
-            switch (action) {
-
-                case "open":
-
-                    if (
-                        selectedFileData.type ===
-                            "folder" &&
-                        selectedFileData.target
-                    ) {
-
-                        navigateTo(
-                            selectedFileData.target
-                        );
-
-                    }
-
-                    break;
-
-
-                case "properties":
-
-                    alert(
-                        `Name: ${selectedFileData.name}\n` +
-                        `Type: ${
-                            selectedFileData.type ===
-                            "folder"
-                                ? "Folder"
-                                : "File"
-                        }`
-                    );
-
-                    break;
-
-
-                case "rename":
-
-                    alert(
-                        "Rename will be added in Step 6E."
-                    );
-
-                    break;
-
-
-                case "copy":
-
-                    alert(
-                        "Copy will be added in Step 6E."
-                    );
-
-                    break;
-
-
-                case "cut":
-
-                    alert(
-                        "Cut will be added in Step 6E."
-                    );
-
-                    break;
-
-
-                case "delete":
-
-                    alert(
-                        "Delete will be added in Step 6E."
-                    );
-
-                    break;
-
-            }
-
-
-            closeFileContextMenu();
-
-        }
-    );
-
-
-    /* =====================================================
-       CLOSE CONTEXT MENU
-       ===================================================== */
-
-    document.addEventListener(
-        "click",
-        event => {
-
-            if (
-                !event.target.closest(
-                    ".file-context-menu"
-                )
-            ) {
-
-                closeFileContextMenu();
-
-            }
-
-        }
-    );
-
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key ===
-                "Escape"
-            ) {
-
-                closeFileContextMenu();
-
-                clearFileSelection();
-
-            }
-
-        }
-    );
-
-
-    /* =====================================================
-       SIDEBAR
-       ===================================================== */
-
-    sidebarItems.forEach(
-        item => {
-
-            item.addEventListener(
-                "click",
-                () => {
-
-                    const folderId =
-                        item.dataset.folder;
-
-
-                    if (
-                        !folderData[folderId]
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    backHistory.length =
-                        0;
-
-
-                    forwardHistory.length =
-                        0;
-
-
-                    clearFileSelection();
-
-                    closeFileContextMenu();
-
-
-                    renderFolder(
-                        folderId
-                    );
-
-                }
+            renderFolder(
+                next
             );
 
         }
     );
 
-
-    /* =====================================================
-       BREADCRUMB CLICK
-       ===================================================== */
 
     filesBreadcrumb?.addEventListener(
         "click",
@@ -2128,114 +1382,57 @@ document.addEventListener("DOMContentLoaded", () => {
                     ".breadcrumb-item"
                 );
 
-
-            if (!button) {
+            if (!button)
                 return;
-            }
-
-
-            const folderId =
-                button.dataset.folder;
-
-
-            if (!folderId) {
-                return;
-            }
-
 
             navigateTo(
-                folderId
+                button.dataset.folder
             );
 
         }
     );
 
 
-    /* =====================================================
-       BACK
-       ===================================================== */
+    sidebarItems.forEach(item => {
 
-    filesBackButton?.addEventListener(
-        "click",
-        () => {
+        item.addEventListener(
+            "click",
+            () => {
 
-            if (
-                backHistory.length ===
-                0
-            ) {
+                const folderId =
+                    item.dataset.folder;
 
-                return;
+                if (
+                    !folderData[folderId]
+                )
+                    return;
+
+                sidebarItems.forEach(
+                    button =>
+                        button.classList.remove(
+                            "active"
+                        )
+                );
+
+                item.classList.add(
+                    "active"
+                );
+
+                backHistory.length =
+                    0;
+
+                forwardHistory.length =
+                    0;
+
+                renderFolder(
+                    folderId
+                );
 
             }
+        );
 
+    });
 
-            forwardHistory.push(
-                currentFolder
-            );
-
-
-            const previousFolder =
-                backHistory.pop();
-
-
-            clearFileSelection();
-
-
-            closeFileContextMenu();
-
-
-            renderFolder(
-                previousFolder
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-       FORWARD
-       ===================================================== */
-
-    filesForwardButton?.addEventListener(
-        "click",
-        () => {
-
-            if (
-                forwardHistory.length ===
-                0
-            ) {
-
-                return;
-
-            }
-
-
-            backHistory.push(
-                currentFolder
-            );
-
-
-            const nextFolder =
-                forwardHistory.pop();
-
-
-            clearFileSelection();
-
-
-            closeFileContextMenu();
-
-
-            renderFolder(
-                nextFolder
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-       SEARCH
-       ===================================================== */
 
     filesSearchInput?.addEventListener(
         "input",
@@ -2244,13 +1441,6 @@ document.addEventListener("DOMContentLoaded", () => {
             searchQuery =
                 filesSearchInput.value;
 
-
-            clearFileSelection();
-
-
-            closeFileContextMenu();
-
-
             renderFolder(
                 currentFolder
             );
@@ -2258,10 +1448,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
-
-    /* =====================================================
-       SORT
-       ===================================================== */
 
     filesSort?.addEventListener(
         "change",
@@ -2270,7 +1456,6 @@ document.addEventListener("DOMContentLoaded", () => {
             sortMode =
                 filesSort.value;
 
-
             renderFolder(
                 currentFolder
             );
@@ -2278,282 +1463,432 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
-
-    /* =====================================================
-       REFRESH
-       ===================================================== */
 
     filesRefreshButton?.addEventListener(
         "click",
-        () => {
-
-            clearFileSelection();
-
-            closeFileContextMenu();
-
-
+        () =>
             renderFolder(
                 currentFolder
+            )
+    );
+
+
+    /* =====================================================
+       FILE CONTEXT MENU
+       ===================================================== */
+
+    function closeContextMenu() {
+
+        byId(
+            "orbitFileContextMenu"
+        )?.remove();
+
+    }
+
+
+    function showContextMenu(
+        event,
+        card = null
+    ) {
+
+        event.preventDefault();
+
+        closeContextMenu();
+
+        if (card)
+            selectFileCard(card);
+        else
+            clearFileSelection();
+
+        const menu =
+            document.createElement(
+                "div"
+            );
+
+        menu.id =
+            "orbitFileContextMenu";
+
+        menu.className =
+            "file-context-menu orbit-file-context-menu";
+
+        const selected =
+            !!selectedItem();
+
+        const hasClipboard =
+            !!clipboard;
+
+
+        menu.innerHTML = `
+
+            ${
+                selected
+                    ? `
+                        <button data-orbit-action="open">
+                            Open
+                        </button>
+
+                        <button data-orbit-action="rename">
+                            Rename
+                        </button>
+
+                        <button data-orbit-action="copy">
+                            Copy
+                        </button>
+
+                        <button data-orbit-action="cut">
+                            Cut
+                        </button>
+
+                        <button data-orbit-action="delete">
+                            Delete
+                        </button>
+
+                        <div class="context-divider"></div>
+
+                        <button data-orbit-action="properties">
+                            Properties
+                        </button>
+
+                        <div class="context-divider"></div>
+                    `
+                    : ""
+            }
+
+            <button
+                data-orbit-action="paste"
+                ${hasClipboard ? "" : "disabled"}
+            >
+                Paste
+            </button>
+
+            <button data-orbit-action="new-folder">
+                New Folder
+            </button>
+
+            <button data-orbit-action="new-file">
+                New File
+            </button>
+
+            <div class="context-divider"></div>
+
+            <button data-orbit-action="refresh">
+                Refresh
+            </button>
+
+        `;
+
+
+        document.body.appendChild(
+            menu
+        );
+
+
+        const rect =
+            menu.getBoundingClientRect();
+
+        let left =
+            event.clientX;
+
+        let top =
+            event.clientY;
+
+
+        if (
+            left + rect.width >
+            window.innerWidth
+        ) {
+
+            left =
+                window.innerWidth -
+                rect.width -
+                10;
+
+        }
+
+
+        if (
+            top + rect.height >
+            window.innerHeight
+        ) {
+
+            top =
+                window.innerHeight -
+                rect.height -
+                10;
+
+        }
+
+
+        menu.style.left =
+            Math.max(
+                8,
+                left
+            ) + "px";
+
+        menu.style.top =
+            Math.max(
+                8,
+                top
+            ) + "px";
+
+        requestAnimationFrame(
+            () =>
+                menu.classList.add(
+                    "open"
+                )
+        );
+
+    }
+
+
+    fileGrid?.addEventListener(
+        "click",
+        event => {
+
+            const card =
+                event.target.closest(
+                    ".file-card"
+                );
+
+            if (!card) {
+
+                clearFileSelection();
+
+                return;
+
+            }
+
+            selectFileCard(
+                card
             );
 
         }
     );
 
 
+    fileGrid?.addEventListener(
+        "contextmenu",
+        event => {
+
+            const card =
+                event.target.closest(
+                    ".file-card"
+                );
+
+            if (card)
+                showContextMenu(
+                    event,
+                    card
+                );
+
+        }
+    );
+
+
+    fileGrid?.addEventListener(
+        "dblclick",
+        event => {
+
+            const card =
+                event.target.closest(
+                    ".file-card"
+                );
+
+            if (!card)
+                return;
+
+            const item =
+                folderData[currentFolder]
+                    ?.items
+                    ?.find(
+                        entry =>
+                            entry._orbitId ===
+                            card.dataset.orbitId
+                    );
+
+            openFile(item);
+
+        }
+    );
+
+
     /* =====================================================
-       OPEN FILES
+       FILE OPERATIONS
        ===================================================== */
 
-    function openFiles() {
+    function uniqueName(
+        base,
+        items
+    ) {
 
-        if (!filesWindow) {
+        const exists =
+            name =>
+                items.some(
+                    item =>
+                        item.name
+                            .toLowerCase() ===
+                        name.toLowerCase()
+                );
+
+        if (!exists(base))
+            return base;
+
+        let count = 2;
+
+        let candidate =
+            `${base} ${count}`;
+
+        while (
+            exists(candidate)
+        ) {
+
+            count++;
+
+            candidate =
+                `${base} ${count}`;
+
+        }
+
+        return candidate;
+
+    }
+
+
+    function renameSelected() {
+
+        const item =
+            selectedItem();
+
+        if (!item) {
+
+            notify(
+                "Select a file or folder first."
+            );
+
             return;
-        }
-
-
-        filesWindow.classList.add(
-            "open"
-        );
-
-
-        filesWindow.classList.remove(
-            "minimized"
-        );
-
-
-        filesWindow.classList.remove(
-            "maximized"
-        );
-
-
-        filesWindow.style.zIndex =
-            "150";
-
-
-        backHistory.length =
-            0;
-
-
-        forwardHistory.length =
-            0;
-
-
-        searchQuery =
-            "";
-
-
-        if (filesSearchInput) {
-
-            filesSearchInput.value =
-                "";
 
         }
 
 
-        sortMode =
-            "name-asc";
+        const value =
+            prompt(
+                "Rename item:",
+                item.name
+            );
 
+        if (value === null)
+            return;
 
-        if (filesSort) {
+        const name =
+            value.trim();
 
-            filesSort.value =
-                "name-asc";
+        if (!name) {
+
+            notify(
+                "Name cannot be empty."
+            );
+
+            return;
 
         }
 
+
+        if (
+            currentItems().some(
+                entry =>
+                    entry !== item &&
+                    entry.name
+                        .toLowerCase() ===
+                    name.toLowerCase()
+            )
+        ) {
+
+            notify(
+                "That name already exists."
+            );
+
+            return;
+
+        }
+
+
+        item.name =
+            name;
+
+        if (
+            item.type === "folder" &&
+            item.target &&
+            folderData[item.target]
+        ) {
+
+            folderData[item.target].name =
+                name;
+
+        }
+
+
+        saveFileSystem();
 
         clearFileSelection();
-
-        closeFileContextMenu();
-
 
         renderFolder(
-            "home"
+            currentFolder
         );
 
-
-        createFilesTaskbarButton();
+        notify(
+            "Item renamed."
+        );
 
     }
 
 
-    /* =====================================================
-       CLOSE FILES
-       ===================================================== */
+    function deleteFolderTree(
+        folderId
+    ) {
 
-    function closeFiles() {
+        const folder =
+            folderData[folderId];
 
-        if (!filesWindow) {
+        if (!folder)
             return;
-        }
 
+        folder.items.forEach(
+            item => {
 
-        filesWindow.classList.remove(
-            "open"
-        );
+                if (
+                    item.type === "folder" &&
+                    item.target
+                ) {
 
+                    deleteFolderTree(
+                        item.target
+                    );
 
-        filesWindow.classList.remove(
-            "minimized"
-        );
-
-
-        filesWindow.classList.remove(
-            "maximized"
-        );
-
-
-        clearFileSelection();
-
-        closeFileContextMenu();
-
-
-        removeFilesTaskbarButton();
-
-    }
-
-
-    /* =====================================================
-       MINIMIZE FILES
-       ===================================================== */
-
-    function minimizeFiles() {
-
-        if (!filesWindow) {
-            return;
-        }
-
-
-        filesWindow.classList.remove(
-            "open"
-        );
-
-
-        filesWindow.classList.add(
-            "minimized"
-        );
-
-
-        closeFileContextMenu();
-
-    }
-
-
-    /* =====================================================
-       MAXIMIZE FILES
-       ===================================================== */
-
-    function maximizeFiles() {
-
-        if (!filesWindow) {
-            return;
-        }
-
-
-        filesWindow.classList.toggle(
-            "maximized"
-        );
-
-
-        closeFileContextMenu();
-
-    }
-
-
-    /* =====================================================
-       DESKTOP FILES ICON
-       ===================================================== */
-
-    filesDesktopIcon?.addEventListener(
-        "dblclick",
-        openFiles
-    );
-
-
-    /* =====================================================
-       FILE WINDOW CONTROLS
-       ===================================================== */
-
-    if (filesWindow) {
-
-        const minimizeButton =
-            $('[data-action="minimize"]', filesWindow);
-
-        const maximizeButton =
-            $('[data-action="maximize"]', filesWindow);
-
-        const closeButton =
-            $('[data-action="close"]', filesWindow);
-
-
-        minimizeButton?.addEventListener(
-            "click",
-            event => {
-
-                event.stopPropagation();
-
-                minimizeFiles();
+                }
 
             }
         );
 
+        delete folderData[
+            folderId
+        ];
 
-        maximizeButton?.addEventListener(
-            "click",
-            event => {
-
-                event.stopPropagation();
-
-                maximizeFiles();
-
-            }
-        );
-
-
-        closeButton?.addEventListener(
-            "click",
-            event => {
-
-                event.stopPropagation();
-
-                closeFiles();
-
-            }
-        );
-
-
-        filesWindow.addEventListener(
-            "mousedown",
-            () => {
-
-                filesWindow.style.zIndex =
-                    "250";
-
-            }
-        );
+        delete parentFolders[
+            folderId
+        ];
 
     }
 
 
-    /* =====================================================
-       TASKBAR FILE BUTTON
-       ===================================================== */
+    function deleteSelected() {
 
-    function createFilesTaskbarButton() {
+        const item =
+            selectedItem();
 
-        if (!taskbarCenter) {
-            return;
-        }
+        if (!item) {
 
-
-        let button =
-            $('[data-taskbar-window="files"]');
-
-
-        if (button) {
-
-            button.classList.add(
-                "active"
+            notify(
+                "Select a file or folder first."
             );
 
             return;
@@ -2561,27 +1896,1422 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        button =
+        if (
+            !confirm(
+                `Delete "${item.name}"?`
+            )
+        )
+            return;
+
+
+        const items =
+            currentItems();
+
+        const index =
+            items.indexOf(
+                item
+            );
+
+        if (index < 0)
+            return;
+
+
+        if (
+            item.type === "folder" &&
+            item.target
+        ) {
+
+            deleteFolderTree(
+                item.target
+            );
+
+        }
+
+
+        const deletedName =
+            item.name;
+
+        items.splice(
+            index,
+            1
+        );
+
+        clipboard =
+            null;
+
+        clearFileSelection();
+
+        saveFileSystem();
+
+        renderFolder(
+            currentFolder
+        );
+
+        notify(
+            `"${deletedName}" deleted.`
+        );
+
+    }
+
+
+    function copySelected() {
+
+        const item =
+            selectedItem();
+
+        if (!item) {
+
+            notify(
+                "Select a file or folder first."
+            );
+
+            return;
+
+        }
+
+
+        clipboard = {
+
+            mode: "copy",
+
+            sourceFolder:
+                currentFolder,
+
+            item:
+                JSON.parse(
+                    JSON.stringify(
+                        item
+                    )
+                )
+
+        };
+
+
+        notify(
+            `"${item.name}" copied.`
+        );
+
+    }
+
+
+    function cutSelected() {
+
+        const item =
+            selectedItem();
+
+        if (!item) {
+
+            notify(
+                "Select a file or folder first."
+            );
+
+            return;
+
+        }
+
+
+        clipboard = {
+
+            mode: "cut",
+
+            sourceFolder:
+                currentFolder,
+
+            item
+
+        };
+
+
+        notify(
+            `"${item.name}" ready to move.`
+        );
+
+    }
+
+
+    function cloneFolderTree(
+        sourceId,
+        newParentId,
+        preferredName
+    ) {
+
+        const source =
+            folderData[sourceId];
+
+        if (!source)
+            return null;
+
+
+        const newId =
+            generateId(
+                "folder"
+            );
+
+
+        folderData[newId] = {
+
+            name:
+                preferredName ||
+                source.name,
+
+            items: []
+
+        };
+
+
+        parentFolders[newId] =
+            newParentId;
+
+
+        source.items.forEach(
+            sourceItem => {
+
+                if (
+                    sourceItem.type ===
+                    "folder" &&
+                    sourceItem.target
+                ) {
+
+                    const childId =
+                        cloneFolderTree(
+                            sourceItem.target,
+                            newId,
+                            sourceItem.name
+                        );
+
+                    folderData[newId]
+                        .items
+                        .push({
+
+                            _orbitId:
+                                generateId(
+                                    "item"
+                                ),
+
+                            name:
+                                sourceItem.name,
+
+                            type:
+                                "folder",
+
+                            icon:
+                                sourceItem.icon ||
+                                "📁",
+
+                            target:
+                                childId
+
+                        });
+
+                }
+
+                else {
+
+                    folderData[newId]
+                        .items
+                        .push({
+
+                            ...JSON.parse(
+                                JSON.stringify(
+                                    sourceItem
+                                )
+                            ),
+
+                            _orbitId:
+                                generateId(
+                                    "item"
+                                )
+
+                        });
+
+                }
+
+            }
+        );
+
+
+        return newId;
+
+    }
+
+
+    function pasteClipboard() {
+
+        if (!clipboard) {
+
+            notify(
+                "Clipboard is empty."
+            );
+
+            return;
+
+        }
+
+
+        const destination =
+            currentItems();
+
+
+        if (
+            clipboard.mode ===
+            "cut"
+        ) {
+
+            const sourceItems =
+                folderData[
+                    clipboard.sourceFolder
+                ]?.items;
+
+            if (!sourceItems)
+                return;
+
+
+            if (
+                clipboard.sourceFolder ===
+                currentFolder
+            ) {
+
+                notify(
+                    "The item is already in this folder."
+                );
+
+                return;
+
+            }
+
+
+            const index =
+                sourceItems.indexOf(
+                    clipboard.item
+                );
+
+            if (index < 0)
+                return;
+
+
+            const moving =
+                sourceItems.splice(
+                    index,
+                    1
+                )[0];
+
+
+            moving.name =
+                uniqueName(
+                    moving.name,
+                    destination
+                );
+
+
+            if (
+                moving.type ===
+                    "folder" &&
+                moving.target
+            ) {
+
+                parentFolders[
+                    moving.target
+                ] =
+                    currentFolder;
+
+            }
+
+
+            destination.push(
+                moving
+            );
+
+        }
+
+        else {
+
+            const source =
+                clipboard.item;
+
+
+            if (
+                source.type ===
+                    "folder" &&
+                source.target
+            ) {
+
+                const name =
+                    uniqueName(
+                        source.name +
+                        " Copy",
+                        destination
+                    );
+
+                const newId =
+                    cloneFolderTree(
+                        source.target,
+                        currentFolder,
+                        name
+                    );
+
+
+                destination.push({
+
+                    _orbitId:
+                        generateId(
+                            "item"
+                        ),
+
+                    name,
+
+                    type:
+                        "folder",
+
+                    icon:
+                        source.icon ||
+                        "📁",
+
+                    target:
+                        newId
+
+                });
+
+            }
+
+            else {
+
+                destination.push({
+
+                    ...JSON.parse(
+                        JSON.stringify(
+                            source
+                        )
+                    ),
+
+                    _orbitId:
+                        generateId(
+                            "item"
+                        ),
+
+                    name:
+                        uniqueName(
+                            source.name +
+                                " Copy",
+                            destination
+                        )
+
+                });
+
+            }
+
+        }
+
+
+        clipboard =
+            null;
+
+        saveFileSystem();
+
+        renderFolder(
+            currentFolder
+        );
+
+        notify(
+            "Item pasted."
+        );
+
+    }
+
+
+    function createNewFolder() {
+
+        const value =
+            prompt(
+                "New folder name:",
+                "New Folder"
+            );
+
+        if (value === null)
+            return;
+
+        const name =
+            value.trim();
+
+        if (!name) {
+
+            notify(
+                "Folder name cannot be empty."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            currentItems()
+                .some(
+                    item =>
+                        item.name
+                            .toLowerCase() ===
+                        name.toLowerCase()
+                )
+        ) {
+
+            notify(
+                "That name already exists."
+            );
+
+            return;
+
+        }
+
+
+        const id =
+            generateId(
+                "folder"
+            );
+
+
+        folderData[id] = {
+
+            name,
+
+            items: []
+
+        };
+
+
+        parentFolders[id] =
+            currentFolder;
+
+
+        currentItems().push({
+
+            _orbitId:
+                generateId(
+                    "item"
+                ),
+
+            name,
+
+            type:
+                "folder",
+
+            icon:
+                "📁",
+
+            target:
+                id
+
+        });
+
+
+        saveFileSystem();
+
+        renderFolder(
+            currentFolder
+        );
+
+        notify(
+            "Folder created."
+        );
+
+    }
+
+
+    function createNewFile() {
+
+        const value =
+            prompt(
+                "New file name:",
+                "New File.txt"
+            );
+
+        if (value === null)
+            return;
+
+        const name =
+            value.trim();
+
+        if (!name) {
+
+            notify(
+                "File name cannot be empty."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            currentItems()
+                .some(
+                    item =>
+                        item.name
+                            .toLowerCase() ===
+                        name.toLowerCase()
+                )
+        ) {
+
+            notify(
+                "That name already exists."
+            );
+
+            return;
+
+        }
+
+
+        currentItems().push({
+
+            _orbitId:
+                generateId(
+                    "item"
+                ),
+
+            name,
+
+            type:
+                "file",
+
+            icon:
+                fileIcon(name)
+
+        });
+
+
+        saveFileSystem();
+
+        renderFolder(
+            currentFolder
+        );
+
+        notify(
+            "File created."
+        );
+
+    }
+
+
+    function showProperties() {
+
+        const item =
+            selectedItem();
+
+        if (!item) {
+
+            notify(
+                "Select an item first."
+            );
+
+            return;
+
+        }
+
+
+        const location =
+            folderData[
+                currentFolder
+            ]?.name ||
+            "Home";
+
+
+        const contents =
+            item.type === "folder" &&
+            item.target
+                ? (
+                    folderData[
+                        item.target
+                    ]?.items?.length ||
+                    0
+                )
+                : null;
+
+
+        showModal(
+            "Properties",
+            `
+
+                <div class="orbit-property-icon">
+                    ${escapeHtml(
+                        item.icon || "📄"
+                    )}
+                </div>
+
+                <div class="orbit-property-row">
+                    <span>Name</span>
+                    <strong>
+                        ${escapeHtml(
+                            item.name
+                        )}
+                    </strong>
+                </div>
+
+                <div class="orbit-property-row">
+                    <span>Type</span>
+                    <strong>
+                        ${
+                            item.type ===
+                            "folder"
+                                ? "Folder"
+                                : "File"
+                        }
+                    </strong>
+                </div>
+
+                <div class="orbit-property-row">
+                    <span>Location</span>
+                    <strong>
+                        ${escapeHtml(
+                            location
+                        )}
+                    </strong>
+                </div>
+
+                <div class="orbit-property-row">
+                    <span>ID</span>
+                    <strong>
+                        ${escapeHtml(
+                            item._orbitId
+                        )}
+                    </strong>
+                </div>
+
+                ${
+                    contents !== null
+                        ? `
+                            <div class="orbit-property-row">
+                                <span>Items</span>
+                                <strong>
+                                    ${contents}
+                                </strong>
+                            </div>
+                        `
+                        : ""
+                }
+
+            `
+        );
+
+    }
+
+
+    function openFile(item) {
+
+        if (!item)
+            return;
+
+
+        if (
+            item.type ===
+                "folder" &&
+            item.target &&
+            folderData[item.target]
+        ) {
+
+            navigateTo(
+                item.target
+            );
+
+            return;
+
+        }
+
+
+        const extension =
+            item.name.includes(".")
+                ? item.name
+                    .split(".")
+                    .pop()
+                    .toLowerCase()
+                : "";
+
+
+        let description =
+            "Simulated file stored inside ORBIT OS.";
+
+
+        if (extension === "txt")
+            description =
+                "Text file preview. Use Notes for persistent editing.";
+
+        if (extension === "html")
+            description =
+                "HTML document detected. ORBIT Browser can simulate a preview.";
+
+        if (extension === "css")
+            description =
+                "CSS stylesheet detected.";
+
+        if (extension === "js")
+            description =
+                "JavaScript source detected.";
+
+        if (extension === "sql")
+            description =
+                "SQL file detected.";
+
+        showModal(
+            item.name,
+            `
+
+                <div class="orbit-preview-icon">
+                    ${escapeHtml(
+                        item.icon ||
+                        "📄"
+                    )}
+                </div>
+
+                <h3>
+                    ${escapeHtml(
+                        item.name
+                    )}
+                </h3>
+
+                <p class="orbit-preview-text">
+                    ${escapeHtml(
+                        description
+                    )}
+                </p>
+
+            `
+        );
+
+    }
+
+
+    /* =====================================================
+       MODALS / NOTIFICATIONS
+       ===================================================== */
+
+    function showModal(
+        title,
+        body,
+        footer = ""
+    ) {
+
+        const overlay =
+            document.createElement(
+                "div"
+            );
+
+        overlay.className =
+            "orbit-modal";
+
+        overlay.innerHTML = `
+
+            <div class="orbit-modal-card">
+
+                <header class="orbit-modal-header">
+
+                    <strong>
+                        ${escapeHtml(
+                            title
+                        )}
+                    </strong>
+
+                    <button
+                        type="button"
+                        class="orbit-modal-close"
+                    >
+                        ×
+                    </button>
+
+                </header>
+
+                <div class="orbit-modal-body">
+                    ${body}
+                </div>
+
+                ${
+                    footer
+                        ? `
+                            <footer class="orbit-modal-actions">
+                                ${footer}
+                            </footer>
+                        `
+                        : ""
+                }
+
+            </div>
+
+        `;
+
+
+        const close =
+            () =>
+                overlay.remove();
+
+
+        $(".orbit-modal-close", overlay)
+            .addEventListener(
+                "click",
+                close
+            );
+
+
+        overlay.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    overlay
+                )
+                    close();
+
+            }
+        );
+
+
+        document.body.appendChild(
+            overlay
+        );
+
+
+        requestAnimationFrame(
+            () =>
+                overlay.classList.add(
+                    "open"
+                )
+        );
+
+
+        return overlay;
+
+    }
+
+
+    function notify(
+        message,
+        title = "ORBIT OS"
+    ) {
+
+        let container =
+            byId(
+                "orbitNotificationContainer"
+            );
+
+
+        if (!container) {
+
+            container =
+                document.createElement(
+                    "div"
+                );
+
+            container.id =
+                "orbitNotificationContainer";
+
+            container.className =
+                "orbit-notification-container";
+
+            document.body.appendChild(
+                container
+            );
+
+        }
+
+
+        const toast =
+            document.createElement(
+                "div"
+            );
+
+        toast.className =
+            "orbit-toast";
+
+
+        toast.innerHTML = `
+
+            <div class="orbit-toast-icon">
+                O
+            </div>
+
+            <div class="orbit-toast-copy">
+
+                <strong>
+                    ${escapeHtml(title)}
+                </strong>
+
+                <span>
+                    ${escapeHtml(message)}
+                </span>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(
+            toast
+        );
+
+
+        requestAnimationFrame(
+            () =>
+                toast.classList.add(
+                    "show"
+                )
+        );
+
+
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+                setTimeout(
+                    () =>
+                        toast.remove(),
+                    250
+                );
+
+            },
+            2600
+        );
+
+    }
+
+
+    /* =====================================================
+       WINDOW MANAGER
+       ===================================================== */
+
+    function focusWindow(win) {
+
+        if (!win)
+            return;
+
+        win.style.zIndex =
+            String(
+                ++windowZIndex
+            );
+
+        const button =
+            taskbarApps.get(
+                win.id
+            );
+
+        button?.classList.add(
+            "active"
+        );
+
+    }
+
+
+    function addTaskbarApp(
+        id,
+        title,
+        icon
+    ) {
+
+        if (
+            !taskbarCenter ||
+            taskbarApps.has(id)
+        )
+            return;
+
+
+        const button =
             document.createElement(
                 "button"
             );
 
-
         button.type =
             "button";
-
 
         button.className =
             "taskbar-app active";
 
+        button.dataset.taskbarWindow =
+            id;
+
+        button.title =
+            title;
+
+        button.textContent =
+            icon;
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const win =
+                    byId(id);
+
+                if (!win) {
+
+                    button.remove();
+
+                    taskbarApps.delete(
+                        id
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    win.classList.contains(
+                        "minimized"
+                    )
+                ) {
+
+                    win.classList.remove(
+                        "minimized"
+                    );
+
+                    win.classList.add(
+                        "open"
+                    );
+
+                    focusWindow(
+                        win
+                    );
+
+                }
+
+                else if (
+                    win.classList.contains(
+                        "open"
+                    )
+                ) {
+
+                    minimizeWindow(
+                        id
+                    );
+
+                }
+
+            }
+        );
+
+
+        taskbarCenter.appendChild(
+            button
+        );
+
+        taskbarApps.set(
+            id,
+            button
+        );
+
+    }
+
+
+    function removeTaskbarApp(id) {
+
+        const button =
+            taskbarApps.get(id);
+
+        button?.remove();
+
+        taskbarApps.delete(
+            id
+        );
+
+    }
+
+
+    function minimizeWindow(id) {
+
+        const win =
+            byId(id);
+
+        if (!win)
+            return;
+
+        win.classList.remove(
+            "open"
+        );
+
+        win.classList.add(
+            "minimized"
+        );
+
+        taskbarApps.get(
+            id
+        )?.classList.remove(
+            "active"
+        );
+
+    }
+
+
+    function closeWindow(id) {
+
+        const win =
+            byId(id);
+
+        if (win)
+            win.remove();
+
+        dynamicWindows.delete(
+            id
+        );
+
+        removeTaskbarApp(
+            id
+        );
+
+    }
+
+
+    function createAppWindow({
+        id,
+        title,
+        icon,
+        width = 720,
+        height = 500,
+        content
+    }) {
+
+        const existing =
+            byId(id);
+
+        if (existing) {
+
+            existing.classList.remove(
+                "minimized"
+            );
+
+            existing.classList.add(
+                "open"
+            );
+
+            focusWindow(
+                existing
+            );
+
+            return existing;
+
+        }
+
+
+        const win =
+            document.createElement(
+                "section"
+            );
+
+        win.id =
+            id;
+
+        win.className =
+            "os-window orbit-app-window open";
+
+        win.style.width =
+            width + "px";
+
+        win.style.height =
+            height + "px";
+
+        win.style.left =
+            Math.max(
+                18,
+                90 +
+                    dynamicWindows.size *
+                    25
+            ) + "px";
+
+        win.style.top =
+            Math.max(
+                70,
+                85 +
+                    dynamicWindows.size *
+                    20
+            ) + "px";
+
+        win.style.zIndex =
+            String(
+                ++windowZIndex
+            );
+
+
+        win.innerHTML = `
+
+            <header class="window-header">
+
+                <div class="window-title">
+
+                    <div class="window-app-icon">
+                        ${escapeHtml(icon)}
+                    </div>
+
+                    <span>
+                        ${escapeHtml(title)}
+                    </span>
+
+                </div>
+
+                <div class="window-controls">
+
+                    <button
+                        class="window-control"
+                        data-orbit-window-action="minimize"
+                        type="button"
+                    >
+                        −
+                    </button>
+
+                    <button
+                        class="window-control"
+                        data-orbit-window-action="maximize"
+                        type="button"
+                    >
+                        □
+                    </button>
+
+                    <button
+                        class="window-control close-control"
+                        data-orbit-window-action="close"
+                        type="button"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+            </header>
+
+            <div class="orbit-app-content">
+                ${content}
+            </div>
+
+        `;
+
+
+        osDesktop.appendChild(
+            win
+        );
+
+        dynamicWindows.set(
+            id,
+            win
+        );
+
+
+        $(
+            '[data-orbit-window-action="minimize"]',
+            win
+        ).addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                minimizeWindow(
+                    id
+                );
+
+            }
+        );
+
+
+        $(
+            '[data-orbit-window-action="maximize"]',
+            win
+        ).addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                win.classList.toggle(
+                    "maximized"
+                );
+
+                focusWindow(
+                    win
+                );
+
+            }
+        );
+
+
+        $(
+            '[data-orbit-window-action="close"]',
+            win
+        ).addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                closeWindow(
+                    id
+                );
+
+            }
+        );
+
+
+        win.addEventListener(
+            "mousedown",
+            () =>
+                focusWindow(
+                    win
+                )
+        );
+
+
+        makeWindowDraggable(
+            win
+        );
+
+        addTaskbarApp(
+            id,
+            title,
+            icon
+        );
+
+        focusWindow(
+            win
+        );
+
+
+        return win;
+
+    }
+
+
+    /* =====================================================
+       FILES WINDOW
+       ===================================================== */
+
+    function createFilesTaskbar() {
+
+        if (!taskbarCenter)
+            return;
+
+        if (
+            $(
+                '[data-taskbar-window="files"]'
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+        button.type =
+            "button";
+
+        button.className =
+            "taskbar-app active";
 
         button.dataset.taskbarWindow =
             "files";
 
-
         button.textContent =
             "📁";
-
 
         button.title =
             "Files";
@@ -2592,16 +3322,14 @@ document.addEventListener("DOMContentLoaded", () => {
             () => {
 
                 if (
-                    filesWindow?.classList.contains(
+                    filesWindow.classList.contains(
                         "open"
                     )
                 ) {
 
                     minimizeFiles();
 
-                }
-
-                else {
+                } else {
 
                     openFiles();
 
@@ -2618,57 +3346,3637 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function removeFilesTaskbarButton() {
+    function openFiles() {
 
-        const button =
-            $('[data-taskbar-window="files"]');
+        if (!filesWindow)
+            return;
+
+        filesWindow.classList.add(
+            "open"
+        );
+
+        filesWindow.classList.remove(
+            "minimized"
+        );
+
+        filesWindow.classList.remove(
+            "maximized"
+        );
+
+        filesWindow.style.zIndex =
+            String(
+                ++windowZIndex
+            );
+
+        searchQuery =
+            "";
+
+        sortMode =
+            "name-asc";
+
+        if (filesSearchInput)
+            filesSearchInput.value =
+                "";
+
+        if (filesSort)
+            filesSort.value =
+                "name-asc";
+
+        backHistory.length =
+            0;
+
+        forwardHistory.length =
+            0;
+
+        renderFolder(
+            "home"
+        );
+
+        createFilesTaskbar();
+
+    }
 
 
-        button?.remove();
+    function closeFiles() {
+
+        filesWindow?.classList.remove(
+            "open"
+        );
+
+        filesWindow?.classList.remove(
+            "minimized"
+        );
+
+        filesWindow?.classList.remove(
+            "maximized"
+        );
+
+        $(
+            '[data-taskbar-window="files"]'
+        )?.remove();
+
+    }
+
+
+    function minimizeFiles() {
+
+        if (!filesWindow)
+            return;
+
+        filesWindow.classList.remove(
+            "open"
+        );
+
+        filesWindow.classList.add(
+            "minimized"
+        );
+
+        $(
+            '[data-taskbar-window="files"]'
+        )?.classList.remove(
+            "active"
+        );
+
+    }
+
+
+    const filesMinimize =
+        filesWindow?.querySelector(
+            '[data-action="minimize"]'
+        );
+
+    const filesMaximize =
+        filesWindow?.querySelector(
+            '[data-action="maximize"]'
+        );
+
+    const filesClose =
+        filesWindow?.querySelector(
+            '[data-action="close"]'
+        );
+
+
+    filesMinimize?.addEventListener(
+        "click",
+        event => {
+
+            event.stopPropagation();
+
+            minimizeFiles();
+
+        }
+    );
+
+
+    filesMaximize?.addEventListener(
+        "click",
+        event => {
+
+            event.stopPropagation();
+
+            filesWindow.classList.toggle(
+                "maximized"
+            );
+
+        }
+    );
+
+
+    filesClose?.addEventListener(
+        "click",
+        event => {
+
+            event.stopPropagation();
+
+            closeFiles();
+
+        }
+    );
+
+
+    filesWindow?.addEventListener(
+        "mousedown",
+        () => {
+
+            filesWindow.style.zIndex =
+                String(
+                    ++windowZIndex
+                );
+
+        }
+    );
+
+
+    filesDesktopIcon?.addEventListener(
+        "dblclick",
+        openFiles
+    );
+
+
+    /* =====================================================
+       NOTES
+       ===================================================== */
+
+    let notes = [];
+
+
+    function loadNotes() {
+
+        try {
+
+            const raw =
+                localStorage.getItem(
+                    NOTES_KEY
+                );
+
+            if (raw) {
+
+                const parsed =
+                    JSON.parse(raw);
+
+                if (
+                    Array.isArray(
+                        parsed
+                    )
+                ) {
+
+                    notes =
+                        parsed;
+
+                    return;
+
+                }
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Notes restore error:",
+                error
+            );
+
+        }
+
+
+        notes = [
+
+            {
+
+                id: "welcome",
+
+                title:
+                    "Welcome to ORBIT OS",
+
+                body:
+                    "This is your personal digital workspace.\n\nYour notes are automatically saved."
+
+            }
+
+        ];
+
+    }
+
+
+    function saveNotes() {
+
+        localStorage.setItem(
+            NOTES_KEY,
+            JSON.stringify(
+                notes
+            )
+        );
+
+    }
+
+
+    function openNotes() {
+
+        const win =
+            createAppWindow({
+
+                id:
+                    "orbitNotesWindow",
+
+                title:
+                    "Notes",
+
+                icon:
+                    "📝",
+
+                width:
+                    760,
+
+                height:
+                    540,
+
+                content: `
+
+                    <div class="notes-app">
+
+                        <aside class="notes-sidebar">
+
+                            <button
+                                type="button"
+                                class="orbit-primary-button"
+                                id="newNoteButton"
+                            >
+                                + New Note
+                            </button>
+
+                            <div
+                                class="notes-list"
+                                id="notesList"
+                            ></div>
+
+                        </aside>
+
+                        <section class="notes-editor">
+
+                            <input
+                                class="notes-title-input"
+                                id="noteTitle"
+                                type="text"
+                                placeholder="Note title"
+                            >
+
+                            <textarea
+                                class="notes-body-input"
+                                id="noteBody"
+                                placeholder="Start writing..."
+                            ></textarea>
+
+                            <div
+                                class="notes-save-status"
+                                id="noteStatus"
+                            >
+                                Saved locally
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                `
+
+            });
+
+
+        if (
+            win.dataset.notesReady ===
+            "true"
+        )
+            return;
+
+
+        win.dataset.notesReady =
+            "true";
+
+
+        const list =
+            byId(
+                "notesList",
+                win
+            ) ||
+            $("#notesList", win);
+
+        const title =
+            $("#noteTitle", win);
+
+        const body =
+            $("#noteBody", win);
+
+        const status =
+            $("#noteStatus", win);
+
+
+        let currentNote =
+            notes[0]?.id ||
+            null;
+
+
+        function renderNotesList() {
+
+            list.innerHTML = "";
+
+            notes.forEach(note => {
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+                button.type =
+                    "button";
+
+                button.className =
+                    "notes-list-item";
+
+                button.textContent =
+                    note.title ||
+                    "Untitled Note";
+
+                if (
+                    note.id ===
+                    currentNote
+                ) {
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                }
+
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        currentNote =
+                            note.id;
+
+                        loadCurrentNote();
+
+                        renderNotesList();
+
+                    }
+                );
+
+
+                list.appendChild(
+                    button
+                );
+
+            });
+
+        }
+
+
+        function loadCurrentNote() {
+
+            const note =
+                notes.find(
+                    entry =>
+                        entry.id ===
+                        currentNote
+                );
+
+            title.value =
+                note?.title ||
+                "";
+
+            body.value =
+                note?.body ||
+                "";
+
+        }
+
+
+        function saveCurrentNote() {
+
+            let note =
+                notes.find(
+                    entry =>
+                        entry.id ===
+                        currentNote
+                );
+
+            if (!note) {
+
+                note = {
+
+                    id:
+                        generateId(
+                            "note"
+                        ),
+
+                    title:
+                        "Untitled Note",
+
+                    body:
+                        ""
+
+                };
+
+                notes.unshift(
+                    note
+                );
+
+                currentNote =
+                    note.id;
+
+            }
+
+
+            note.title =
+                title.value.trim() ||
+                "Untitled Note";
+
+            note.body =
+                body.value;
+
+            saveNotes();
+
+            status.textContent =
+                "Saved locally • " +
+                new Date()
+                    .toLocaleTimeString(
+                        [],
+                        {
+                            hour:
+                                "numeric",
+
+                            minute:
+                                "2-digit"
+                        }
+                    );
+
+            renderNotesList();
+
+        }
+
+
+        $("#newNoteButton", win)
+            .addEventListener(
+                "click",
+                () => {
+
+                    const note = {
+
+                        id:
+                            generateId(
+                                "note"
+                            ),
+
+                        title:
+                            "Untitled Note",
+
+                        body:
+                            ""
+
+                    };
+
+                    notes.unshift(
+                        note
+                    );
+
+                    currentNote =
+                        note.id;
+
+                    saveNotes();
+
+                    loadCurrentNote();
+
+                    renderNotesList();
+
+                    title.focus();
+
+                }
+            );
+
+
+        title.addEventListener(
+            "input",
+            saveCurrentNote
+        );
+
+        body.addEventListener(
+            "input",
+            saveCurrentNote
+        );
+
+
+        renderNotesList();
+
+        loadCurrentNote();
 
     }
 
 
     /* =====================================================
-       DRAGGABLE WINDOW
+       CALCULATOR
+       ===================================================== */
+
+    function openCalculator() {
+
+        const win =
+            createAppWindow({
+
+                id:
+                    "orbitCalculatorWindow",
+
+                title:
+                    "Calculator",
+
+                icon:
+                    "🧮",
+
+                width:
+                    370,
+
+                height:
+                    540,
+
+                content: `
+
+                    <div class="calculator-app">
+
+                        <div
+                            class="calculator-display"
+                            id="calcDisplay"
+                        >
+                            0
+                        </div>
+
+                        <div class="calculator-grid">
+
+                            <button
+                                data-calc-action="clear"
+                            >
+                                C
+                            </button>
+
+                            <button
+                                data-calc-action="back"
+                            >
+                                ⌫
+                            </button>
+
+                            <button
+                                data-calc-value="/"
+                            >
+                                ÷
+                            </button>
+
+                            <button
+                                data-calc-value="*"
+                            >
+                                ×
+                            </button>
+
+                            <button data-calc-value="7">
+                                7
+                            </button>
+
+                            <button data-calc-value="8">
+                                8
+                            </button>
+
+                            <button data-calc-value="9">
+                                9
+                            </button>
+
+                            <button data-calc-value="-">
+                                −
+                            </button>
+
+                            <button data-calc-value="4">
+                                4
+                            </button>
+
+                            <button data-calc-value="5">
+                                5
+                            </button>
+
+                            <button data-calc-value="6">
+                                6
+                            </button>
+
+                            <button data-calc-value="+">
+                                +
+                            </button>
+
+                            <button data-calc-value="1">
+                                1
+                            </button>
+
+                            <button data-calc-value="2">
+                                2
+                            </button>
+
+                            <button data-calc-value="3">
+                                3
+                            </button>
+
+                            <button
+                                data-calc-action="equals"
+                                class="calculator-equals"
+                            >
+                                =
+                            </button>
+
+                            <button
+                                data-calc-value="0"
+                                class="calculator-zero"
+                            >
+                                0
+                            </button>
+
+                            <button data-calc-value=".">
+                                .
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `
+
+            });
+
+
+        if (
+            win.dataset.calculatorReady ===
+            "true"
+        )
+            return;
+
+
+        win.dataset.calculatorReady =
+            "true";
+
+
+        const display =
+            $("#calcDisplay", win);
+
+
+        let current =
+            "0";
+
+        let stored =
+            null;
+
+        let operator =
+            null;
+
+        let waiting =
+            false;
+
+
+        function updateDisplay() {
+
+            display.textContent =
+                current;
+
+        }
+
+
+        function calculate() {
+
+            const a =
+                Number(
+                    stored
+                );
+
+            const b =
+                Number(
+                    current
+                );
+
+
+            if (
+                Number.isNaN(a) ||
+                Number.isNaN(b)
+            ) {
+
+                current =
+                    "Error";
+
+            }
+
+            else if (
+                operator === "+"
+            ) {
+
+                current =
+                    String(
+                        a + b
+                    );
+
+            }
+
+            else if (
+                operator === "-"
+            ) {
+
+                current =
+                    String(
+                        a - b
+                    );
+
+            }
+
+            else if (
+                operator === "*"
+            ) {
+
+                current =
+                    String(
+                        a * b
+                    );
+
+            }
+
+            else if (
+                operator === "/"
+            ) {
+
+                current =
+                    b === 0
+                        ? "Error"
+                        : String(
+                            a / b
+                        );
+
+            }
+
+
+            stored =
+                null;
+
+            operator =
+                null;
+
+        }
+
+
+        $$(
+            "[data-calc-action], [data-calc-value]",
+            win
+        ).forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const action =
+                            button.dataset.calcAction;
+
+                        const value =
+                            button.dataset.calcValue;
+
+
+                        if (
+                            action ===
+                            "clear"
+                        ) {
+
+                            current =
+                                "0";
+
+                            stored =
+                                null;
+
+                            operator =
+                                null;
+
+                            waiting =
+                                false;
+
+                        }
+
+                        else if (
+                            action ===
+                            "back"
+                        ) {
+
+                            current =
+                                current.length >
+                                1
+                                    ? current.slice(
+                                        0,
+                                        -1
+                                    )
+                                    : "0";
+
+                        }
+
+                        else if (
+                            action ===
+                            "equals"
+                        ) {
+
+                            if (
+                                stored !==
+                                    null &&
+                                operator
+                            ) {
+
+                                calculate();
+
+                            }
+
+                            waiting =
+                                true;
+
+                        }
+
+                        else if (
+                            ["+", "-", "*", "/"]
+                                .includes(
+                                    value
+                                )
+                        ) {
+
+                            if (
+                                operator &&
+                                !waiting
+                            ) {
+
+                                calculate();
+
+                            }
+
+                            stored =
+                                current;
+
+                            operator =
+                                value;
+
+                            waiting =
+                                true;
+
+                        }
+
+                        else if (
+                            value
+                        ) {
+
+                            if (
+                                current ===
+                                "Error"
+                            ) {
+
+                                current =
+                                    "0";
+
+                            }
+
+                            if (waiting) {
+
+                                current =
+                                    value === "."
+                                        ? "0."
+                                        : value;
+
+                                waiting =
+                                    false;
+
+                            }
+
+                            else if (
+                                value === "." &&
+                                current.includes(
+                                    "."
+                                )
+                            ) {
+
+                                return;
+
+                            }
+
+                            else if (
+                                current ===
+                                    "0" &&
+                                value !== "."
+                            ) {
+
+                                current =
+                                    value;
+
+                            }
+
+                            else {
+
+                                current +=
+                                    value;
+
+                            }
+
+                        }
+
+
+                        updateDisplay();
+
+                    }
+                );
+
+            }
+        );
+
+
+        updateDisplay();
+
+    }
+
+
+    /* =====================================================
+       TERMINAL
+       ===================================================== */
+
+    function openTerminal() {
+
+        const win =
+            createAppWindow({
+
+                id:
+                    "orbitTerminalWindow",
+
+                title:
+                    "Terminal",
+
+                icon:
+                    ">_",
+
+                width:
+                    760,
+
+                height:
+                    500,
+
+                content: `
+
+                    <div class="terminal-app">
+
+                        <div
+                            class="terminal-output"
+                            id="terminalOutput"
+                        >
+
+                            <div>
+                                ORBIT TERMINAL v3.0
+                            </div>
+
+                            <div>
+                                Type <strong>help</strong>
+                                to view commands.
+                            </div>
+
+                            <br>
+
+                        </div>
+
+                        <form
+                            class="terminal-input-row"
+                            id="terminalForm"
+                        >
+
+                            <span>
+                                orbit@desktop:~$
+                            </span>
+
+                            <input
+                                id="terminalInput"
+                                type="text"
+                                autocomplete="off"
+                                spellcheck="false"
+                            >
+
+                        </form>
+
+                    </div>
+
+                `
+
+            });
+
+
+        if (
+            win.dataset.terminalReady ===
+            "true"
+        )
+            return;
+
+
+        win.dataset.terminalReady =
+            "true";
+
+
+        const output =
+            $("#terminalOutput", win);
+
+        const input =
+            $("#terminalInput", win);
+
+
+        function print(
+            text = ""
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.textContent =
+                text;
+
+            output.appendChild(
+                div
+            );
+
+            output.scrollTop =
+                output.scrollHeight;
+
+        }
+
+
+        function runCommand(
+            command
+        ) {
+
+            const parts =
+                command.split(
+                    /\s+/
+                );
+
+            const base =
+                (
+                    parts[0] ||
+                    ""
+                ).toLowerCase();
+
+
+            if (
+                base === "help"
+            ) {
+
+                [
+
+                    "help          Show commands",
+                    "clear         Clear terminal",
+                    "date          Show date",
+                    "time          Show time",
+                    "whoami        Show user",
+                    "pwd           Show folder",
+                    "ls            List files",
+                    "open files    Open Files",
+                    "open notes    Open Notes",
+                    "open calc     Open Calculator",
+                    "open browser  Open Browser",
+                    "open settings Open Settings",
+                    "systeminfo    Show system information",
+                    "lock          Lock system",
+                    "fullscreen    Toggle fullscreen",
+                    "echo TEXT     Print text"
+
+                ].forEach(
+                    print
+                );
+
+            }
+
+            else if (
+                base === "clear"
+            ) {
+
+                output.innerHTML =
+                    "";
+
+            }
+
+            else if (
+                base === "date"
+            ) {
+
+                print(
+                    new Date()
+                        .toLocaleDateString(
+                            "en-IN"
+                        )
+                );
+
+            }
+
+            else if (
+                base === "time"
+            ) {
+
+                print(
+                    new Date()
+                        .toLocaleTimeString(
+                            "en-IN"
+                        )
+                );
+
+            }
+
+            else if (
+                base === "whoami"
+            ) {
+
+                print(
+                    "Gaurav@ORBIT"
+                );
+
+            }
+
+            else if (
+                base === "pwd"
+            ) {
+
+                print(
+                    `/home/${folderData[currentFolder]?.name || "Home"}`
+                );
+
+            }
+
+            else if (
+                base === "ls"
+            ) {
+
+                currentItems()
+                    .forEach(
+                        item =>
+                            print(
+                                `${item.icon || "📄"}  ${item.name}`
+                            )
+                    );
+
+            }
+
+            else if (
+                base === "open"
+            ) {
+
+                const target =
+                    parts
+                        .slice(1)
+                        .join(" ")
+                        .toLowerCase();
+
+                if (
+                    target.includes(
+                        "file"
+                    )
+                )
+                    openFiles();
+
+                else if (
+                    target.includes(
+                        "note"
+                    )
+                )
+                    openNotes();
+
+                else if (
+                    target.includes(
+                        "calc"
+                    )
+                )
+                    openCalculator();
+
+                else if (
+                    target.includes(
+                        "browser"
+                    )
+                )
+                    openBrowser();
+
+                else if (
+                    target.includes(
+                        "setting"
+                    )
+                )
+                    openSettings();
+
+                else if (
+                    target.includes(
+                        "task"
+                    )
+                )
+                    openTaskManager();
+
+                else
+                    print(
+                        "Application not found."
+                    );
+
+            }
+
+            else if (
+                base === "systeminfo"
+            ) {
+
+                print(
+                    "ORBIT OS 3.0"
+                );
+
+                print(
+                    "Runtime: Browser"
+                );
+
+                print(
+                    "Frontend: HTML5 / CSS3 / Vanilla JavaScript"
+                );
+
+                print(
+                    "Storage: LocalStorage"
+                );
+
+            }
+
+            else if (
+                base === "lock"
+            ) {
+
+                lockSystem();
+
+            }
+
+            else if (
+                base === "fullscreen"
+            ) {
+
+                toggleFullscreen();
+
+            }
+
+            else if (
+                base === "echo"
+            ) {
+
+                print(
+                    parts
+                        .slice(1)
+                        .join(" ")
+                );
+
+            }
+
+            else {
+
+                print(
+                    `Command not found: ${command}`
+                );
+
+            }
+
+        }
+
+
+        $("#terminalForm", win)
+            .addEventListener(
+                "submit",
+                event => {
+
+                    event.preventDefault();
+
+                    const command =
+                        input.value.trim();
+
+                    if (!command)
+                        return;
+
+                    print(
+                        `orbit@desktop:~$ ${command}`
+                    );
+
+                    runCommand(
+                        command
+                    );
+
+                    input.value =
+                        "";
+
+                }
+            );
+
+
+        input.focus();
+
+    }
+
+
+    /* =====================================================
+       BROWSER
+       ===================================================== */
+
+    function openBrowser() {
+
+        const win =
+            createAppWindow({
+
+                id:
+                    "orbitBrowserWindow",
+
+                title:
+                    "Browser",
+
+                icon:
+                    "🌐",
+
+                width:
+                    820,
+
+                height:
+                    560,
+
+                content: `
+
+                    <div class="browser-app">
+
+                        <div
+                            class="browser-toolbar"
+                        >
+
+                            <button
+                                type="button"
+                                id="browserBack"
+                            >
+                                ←
+                            </button>
+
+                            <button
+                                type="button"
+                                id="browserForward"
+                            >
+                                →
+                            </button>
+
+                            <button
+                                type="button"
+                                id="browserHome"
+                            >
+                                ⌂
+                            </button>
+
+                            <input
+                                id="browserAddress"
+                                type="text"
+                                value="orbit://home"
+                                placeholder="Search or enter address"
+                            >
+
+                            <button
+                                type="button"
+                                id="browserGo"
+                            >
+                                Go
+                            </button>
+
+                        </div>
+
+                        <div
+                            class="browser-page"
+                            id="browserPage"
+                        ></div>
+
+                    </div>
+
+                `
+
+            });
+
+
+        if (
+            win.dataset.browserReady ===
+            "true"
+        )
+            return;
+
+
+        win.dataset.browserReady =
+            "true";
+
+
+        const address =
+            $("#browserAddress", win);
+
+        const page =
+            $("#browserPage", win);
+
+        const history = [];
+
+        let historyIndex =
+            -1;
+
+
+        function renderPage(
+            value,
+            addHistory = true
+        ) {
+
+            const query =
+                value.trim() ||
+                "orbit://home";
+
+
+            if (addHistory) {
+
+                history.splice(
+                    historyIndex + 1
+                );
+
+                history.push(
+                    query
+                );
+
+                historyIndex++;
+
+            }
+
+
+            address.value =
+                query;
+
+
+            if (
+                query ===
+                "orbit://home"
+            ) {
+
+                page.innerHTML = `
+
+                    <div class="browser-home">
+
+                        <div class="browser-orbit-mark">
+                            O
+                        </div>
+
+                        <h2>
+                            Welcome to ORBIT Browser
+                        </h2>
+
+                        <p>
+                            A browser simulation built inside ORBIT OS.
+                        </p>
+
+                        <div class="browser-search-hint">
+                            Search the local ORBIT workspace.
+                        </div>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            const matches = [];
+
+            Object.values(
+                folderData
+            ).forEach(
+                folder => {
+
+                    folder.items.forEach(
+                        item => {
+
+                            if (
+                                item.name
+                                    .toLowerCase()
+                                    .includes(
+                                        query.toLowerCase()
+                                    )
+                            ) {
+
+                                matches.push(
+                                    item.name
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+
+            page.innerHTML = `
+
+                <div class="browser-result">
+
+                    <span>
+                        ORBIT SEARCH
+                    </span>
+
+                    <h2>
+                        ${escapeHtml(query)}
+                    </h2>
+
+                    <p>
+                        ${matches.length}
+                        matching local result(s).
+                    </p>
+
+                    <div class="browser-results-list">
+
+                        ${
+                            matches.length
+                                ? matches
+                                    .slice(
+                                        0,
+                                        10
+                                    )
+                                    .map(
+                                        name =>
+                                            `
+                                                <div class="browser-result-card">
+
+                                                    <strong>
+                                                        ${escapeHtml(
+                                                            name
+                                                        )}
+                                                    </strong>
+
+                                                    <small>
+                                                        ORBIT local workspace
+                                                    </small>
+
+                                                </div>
+                                            `
+                                    )
+                                    .join("")
+                                : `
+                                    <div class="browser-result-card">
+                                        <strong>
+                                            No result found
+                                        </strong>
+                                    </div>
+                                `
+                        }
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        $("#browserGo", win)
+            .addEventListener(
+                "click",
+                () =>
+                    renderPage(
+                        address.value
+                    )
+            );
+
+
+        address.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
+
+                    renderPage(
+                        address.value
+                    );
+
+                }
+
+            }
+        );
+
+
+        $("#browserHome", win)
+            .addEventListener(
+                "click",
+                () =>
+                    renderPage(
+                        "orbit://home"
+                    )
+            );
+
+
+        $("#browserBack", win)
+            .addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        historyIndex >
+                        0
+                    ) {
+
+                        historyIndex--;
+
+                        renderPage(
+                            history[
+                                historyIndex
+                            ],
+                            false
+                        );
+
+                    }
+
+                }
+            );
+
+
+        $("#browserForward", win)
+            .addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        historyIndex <
+                        history.length - 1
+                    ) {
+
+                        historyIndex++;
+
+                        renderPage(
+                            history[
+                                historyIndex
+                            ],
+                            false
+                        );
+
+                    }
+
+                }
+            );
+
+
+        renderPage(
+            "orbit://home"
+        );
+
+    }
+
+
+    /* =====================================================
+       SETTINGS
+       ===================================================== */
+
+    let settings = {
+
+        theme:
+            "dark",
+
+        accent:
+            "violet",
+
+        reducedMotion:
+            false
+
+    };
+
+
+    function loadSettings() {
+
+        try {
+
+            const raw =
+                localStorage.getItem(
+                    SETTINGS_KEY
+                );
+
+            if (!raw)
+                return;
+
+            const parsed =
+                JSON.parse(raw);
+
+            settings =
+                {
+                    ...settings,
+                    ...parsed
+                };
+
+        } catch (error) {
+
+            console.error(
+                "Settings restore error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    function saveSettings() {
+
+        localStorage.setItem(
+            SETTINGS_KEY,
+            JSON.stringify(
+                settings
+            )
+        );
+
+    }
+
+
+    function applySettings() {
+
+        document.body.classList.toggle(
+            "orbit-light",
+            settings.theme ===
+                "light"
+        );
+
+        document.body.classList.toggle(
+            "orbit-accent-cyan",
+            settings.accent ===
+                "cyan"
+        );
+
+        document.body.classList.toggle(
+            "orbit-reduced-motion",
+            !!settings.reducedMotion
+        );
+
+    }
+
+
+    function openSettings() {
+
+        const win =
+            createAppWindow({
+
+                id:
+                    "orbitSettingsWindow",
+
+                title:
+                    "Settings",
+
+                icon:
+                    "⚙",
+
+                width:
+                    620,
+
+                height:
+                    500,
+
+                content: `
+
+                    <div class="settings-app">
+
+                        <section class="settings-section">
+
+                            <div
+                                class="settings-section-title"
+                            >
+
+                                <strong>
+                                    Appearance
+                                </strong>
+
+                                <span>
+                                    Customize ORBIT OS.
+                                </span>
+
+                            </div>
+
+                            <div class="settings-option">
+
+                                <label>
+                                    Theme
+                                </label>
+
+                                <select
+                                    id="themeSelect"
+                                >
+
+                                    <option value="dark">
+                                        Dark
+                                    </option>
+
+                                    <option value="light">
+                                        Light
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="settings-option">
+
+                                <label>
+                                    Accent
+                                </label>
+
+                                <select
+                                    id="accentSelect"
+                                >
+
+                                    <option value="violet">
+                                        Violet
+                                    </option>
+
+                                    <option value="cyan">
+                                        Cyan
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="settings-option">
+
+                                <label>
+                                    Reduced Motion
+                                </label>
+
+                                <input
+                                    type="checkbox"
+                                    id="motionToggle"
+                                >
+
+                            </div>
+
+                        </section>
+
+                        <section class="settings-section">
+
+                            <div
+                                class="settings-section-title"
+                            >
+
+                                <strong>
+                                    System
+                                </strong>
+
+                                <span>
+                                    Browser-based system controls.
+                                </span>
+
+                            </div>
+
+                            <div class="settings-actions-grid">
+
+                                <button
+                                    class="orbit-secondary-button"
+                                    id="lockButton"
+                                    type="button"
+                                >
+                                    Lock System
+                                </button>
+
+                                <button
+                                    class="orbit-secondary-button"
+                                    id="fullscreenButton"
+                                    type="button"
+                                >
+                                    Fullscreen
+                                </button>
+
+                                <button
+                                    class="orbit-secondary-button"
+                                    id="resetButton"
+                                    type="button"
+                                >
+                                    Reset Saved Data
+                                </button>
+
+                            </div>
+
+                        </section>
+
+                        <section class="settings-section about-section">
+
+                            <div
+                                class="settings-section-title"
+                            >
+
+                                <strong>
+                                    ORBIT OS
+                                </strong>
+
+                                <span>
+                                    Version 3.0 • Browser desktop simulation
+                                </span>
+
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                `
+
+            });
+
+
+        if (
+            win.dataset.settingsReady ===
+            "true"
+        )
+            return;
+
+
+        win.dataset.settingsReady =
+            "true";
+
+
+        const theme =
+            $("#themeSelect", win);
+
+        const accent =
+            $("#accentSelect", win);
+
+        const motion =
+            $("#motionToggle", win);
+
+
+        theme.value =
+            settings.theme;
+
+        accent.value =
+            settings.accent;
+
+        motion.checked =
+            !!settings.reducedMotion;
+
+
+        theme.addEventListener(
+            "change",
+            () => {
+
+                settings.theme =
+                    theme.value;
+
+                saveSettings();
+
+                applySettings();
+
+            }
+        );
+
+
+        accent.addEventListener(
+            "change",
+            () => {
+
+                settings.accent =
+                    accent.value;
+
+                saveSettings();
+
+                applySettings();
+
+            }
+        );
+
+
+        motion.addEventListener(
+            "change",
+            () => {
+
+                settings.reducedMotion =
+                    motion.checked;
+
+                saveSettings();
+
+                applySettings();
+
+            }
+        );
+
+
+        $("#lockButton", win)
+            .addEventListener(
+                "click",
+                lockSystem
+            );
+
+
+        $("#fullscreenButton", win)
+            .addEventListener(
+                "click",
+                toggleFullscreen
+            );
+
+
+        $("#resetButton", win)
+            .addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        confirm(
+                            "Reset all saved ORBIT data?"
+                        )
+                    ) {
+
+                        localStorage.removeItem(
+                            FILES_KEY
+                        );
+
+                        localStorage.removeItem(
+                            NOTES_KEY
+                        );
+
+                        localStorage.removeItem(
+                            SETTINGS_KEY
+                        );
+
+                        location.reload();
+
+                    }
+
+                }
+            );
+
+    }
+
+
+    /* =====================================================
+       TASK MANAGER
+       ===================================================== */
+
+    function openTaskManager() {
+
+        const win =
+            createAppWindow({
+
+                id:
+                    "orbitTaskManagerWindow",
+
+                title:
+                    "Task Manager",
+
+                icon:
+                    "▦",
+
+                width:
+                    640,
+
+                height:
+                    420,
+
+                content: `
+
+                    <div
+                        class="task-manager-app"
+                    >
+
+                        <div
+                            class="task-manager-summary"
+                            id="taskSummary"
+                        ></div>
+
+                        <div
+                            class="task-manager-header"
+                        >
+
+                            <span>
+                                Application
+                            </span>
+
+                            <span>
+                                Status
+                            </span>
+
+                            <span>
+                                Action
+                            </span>
+
+                        </div>
+
+                        <div
+                            class="task-manager-list"
+                            id="taskList"
+                        ></div>
+
+                    </div>
+
+                `
+
+            });
+
+
+        if (
+            win.dataset.taskReady ===
+            "true"
+        )
+            return;
+
+
+        win.dataset.taskReady =
+            "true";
+
+
+        const list =
+            $("#taskList", win);
+
+        const summary =
+            $("#taskSummary", win);
+
+
+        function renderTasks() {
+
+            list.innerHTML =
+                "";
+
+            const apps = [];
+
+
+            if (
+                filesWindow?.classList.contains(
+                    "open"
+                )
+            ) {
+
+                apps.push({
+
+                    id:
+                        "filesWindow",
+
+                    name:
+                        "Files",
+
+                    icon:
+                        "📁",
+
+                    status:
+                        "Running"
+
+                });
+
+            }
+
+
+            dynamicWindows.forEach(
+                (windowElement, id) => {
+
+                    if (
+                        !document.body.contains(
+                            windowElement
+                        )
+                    )
+                        return;
+
+                    const title =
+                        $(
+                            ".window-title span",
+                            windowElement
+                        )?.textContent ||
+                        "Application";
+
+                    const icon =
+                        $(
+                            ".window-app-icon",
+                            windowElement
+                        )?.textContent ||
+                        "◌";
+
+                    const status =
+                        windowElement.classList.contains(
+                            "minimized"
+                        )
+                            ? "Minimized"
+                            : "Running";
+
+
+                    apps.push({
+
+                        id,
+
+                        name:
+                            title,
+
+                        icon,
+
+                        status
+
+                    });
+
+                }
+            );
+
+
+            summary.textContent =
+                `${apps.length} application${apps.length === 1 ? "" : "s"} in session`;
+
+
+            apps.forEach(
+                app => {
+
+                    const row =
+                        document.createElement(
+                            "div"
+                        );
+
+                    row.className =
+                        "task-manager-row";
+
+
+                    row.innerHTML = `
+
+                        <div class="task-manager-name">
+
+                            <span>
+                                ${escapeHtml(
+                                    app.icon
+                                )}
+                            </span>
+
+                            <strong>
+                                ${escapeHtml(
+                                    app.name
+                                )}
+                            </strong>
+
+                        </div>
+
+                        <span>
+                            ${escapeHtml(
+                                app.status
+                            )}
+                        </span>
+
+                        <button
+                            type="button"
+                            data-task-close="${escapeHtml(
+                                app.id
+                            )}"
+                        >
+                            Close
+                        </button>
+
+                    `;
+
+
+                    $(
+                        "[data-task-close]",
+                        row
+                    ).addEventListener(
+                        "click",
+                        () => {
+
+                            if (
+                                app.id ===
+                                "filesWindow"
+                            ) {
+
+                                closeFiles();
+
+                            } else {
+
+                                closeWindow(
+                                    app.id
+                                );
+
+                            }
+
+                            renderTasks();
+
+                        }
+                    );
+
+
+                    list.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+
+
+        renderTasks();
+
+        const refreshTimer =
+            setInterval(
+                () => {
+
+                    if (
+                        !document.body.contains(
+                            win
+                        )
+                    ) {
+
+                        clearInterval(
+                            refreshTimer
+                        );
+
+                        return;
+
+                    }
+
+                    renderTasks();
+
+                },
+                1000
+            );
+
+    }
+
+
+    /* =====================================================
+       START MENU
+       ===================================================== */
+
+    function ensureStartMenu() {
+
+        let menu =
+            byId(
+                "orbitStartMenu"
+            );
+
+
+        if (menu)
+            return menu;
+
+
+        menu =
+            document.createElement(
+                "div"
+            );
+
+        menu.id =
+            "orbitStartMenu";
+
+        menu.className =
+            "orbit-start-menu";
+
+
+        menu.innerHTML = `
+
+            <div class="start-menu-header">
+
+                <div>
+
+                    <strong>
+                        ORBIT OS
+                    </strong>
+
+                    <span>
+                        Application Center
+                    </span>
+
+                </div>
+
+                <div class="start-menu-logo">
+                    O
+                </div>
+
+            </div>
+
+            <input
+                class="start-menu-search"
+                id="startSearch"
+                type="search"
+                placeholder="Search applications..."
+                autocomplete="off"
+            >
+
+            <div
+                class="start-menu-apps"
+                id="startApps"
+            ></div>
+
+            <div class="start-menu-footer">
+
+                <button
+                    id="startLock"
+                    type="button"
+                >
+                    Lock
+                </button>
+
+                <button
+                    id="startRestart"
+                    type="button"
+                >
+                    Restart
+                </button>
+
+                <button
+                    id="startShutdown"
+                    type="button"
+                >
+                    Shutdown
+                </button>
+
+            </div>
+
+        `;
+
+
+        osDesktop.appendChild(
+            menu
+        );
+
+
+        const apps = () => [
+
+            [
+                "Files",
+                "📁",
+                openFiles
+            ],
+
+            [
+                "Notes",
+                "📝",
+                openNotes
+            ],
+
+            [
+                "Browser",
+                "🌐",
+                openBrowser
+            ],
+
+            [
+                "Terminal",
+                ">_",
+                openTerminal
+            ],
+
+            [
+                "Calculator",
+                "🧮",
+                openCalculator
+            ],
+
+            [
+                "Settings",
+                "⚙",
+                openSettings
+            ],
+
+            [
+                "Task Manager",
+                "▦",
+                openTaskManager
+            ]
+
+        ];
+
+
+        function renderApps(
+            filter = ""
+        ) {
+
+            const container =
+                $("#startApps", menu);
+
+            const query =
+                filter
+                    .trim()
+                    .toLowerCase();
+
+
+            container.innerHTML =
+                "";
+
+
+            apps()
+                .filter(
+                    app =>
+                        app[0]
+                            .toLowerCase()
+                            .includes(
+                                query
+                            )
+                )
+                .forEach(
+                    app => {
+
+                        const button =
+                            document.createElement(
+                                "button"
+                            );
+
+                        button.type =
+                            "button";
+
+                        button.className =
+                            "start-menu-app";
+
+
+                        button.innerHTML = `
+
+                            <span>
+                                ${escapeHtml(
+                                    app[1]
+                                )}
+                            </span>
+
+                            <strong>
+                                ${escapeHtml(
+                                    app[0]
+                                )}
+                            </strong>
+
+                        `;
+
+
+                        button.addEventListener(
+                            "click",
+                            () => {
+
+                                menu.classList.remove(
+                                    "open"
+                                );
+
+                                app[2]();
+
+                            }
+                        );
+
+
+                        container.appendChild(
+                            button
+                        );
+
+                    }
+                );
+
+        }
+
+
+        $("#startSearch", menu)
+            .addEventListener(
+                "input",
+                event =>
+                    renderApps(
+                        event.target.value
+                    )
+            );
+
+
+        $("#startLock", menu)
+            .addEventListener(
+                "click",
+                lockSystem
+            );
+
+
+        $("#startRestart", menu)
+            .addEventListener(
+                "click",
+                () =>
+                    location.reload()
+            );
+
+
+        $("#startShutdown", menu)
+            .addEventListener(
+                "click",
+                shutdownSystem
+            );
+
+
+        renderApps();
+
+        return menu;
+
+    }
+
+
+    function toggleStartMenu() {
+
+        const menu =
+            ensureStartMenu();
+
+        menu.classList.toggle(
+            "open"
+        );
+
+
+        if (
+            menu.classList.contains(
+                "open"
+            )
+        ) {
+
+            const search =
+                $("#startSearch", menu);
+
+            search.value =
+                "";
+
+            search.focus();
+
+        }
+
+    }
+
+
+    taskbarOrbitButton?.addEventListener(
+        "click",
+        event => {
+
+            event.stopPropagation();
+
+            toggleStartMenu();
+
+        }
+    );
+
+
+    /* =====================================================
+       SPOTLIGHT SEARCH
+       ===================================================== */
+
+    function openSpotlight() {
+
+        let overlay =
+            byId(
+                "orbitSpotlight"
+            );
+
+
+        if (!overlay) {
+
+            overlay =
+                document.createElement(
+                    "div"
+                );
+
+            overlay.id =
+                "orbitSpotlight";
+
+            overlay.className =
+                "orbit-spotlight";
+
+
+            overlay.innerHTML = `
+
+                <div class="spotlight-card">
+
+                    <div class="spotlight-title">
+                        ORBIT Search
+                    </div>
+
+                    <input
+                        id="spotlightInput"
+                        type="search"
+                        placeholder="Search apps and files..."
+                        autocomplete="off"
+                    >
+
+                    <div
+                        class="spotlight-results"
+                        id="spotlightResults"
+                    ></div>
+
+                </div>
+
+            `;
+
+
+            document.body.appendChild(
+                overlay
+            );
+
+
+            overlay.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target ===
+                        overlay
+                    ) {
+
+                        overlay.classList.remove(
+                            "open"
+                        );
+
+                    }
+
+                }
+            );
+
+
+            $("#spotlightInput", overlay)
+                .addEventListener(
+                    "input",
+                    event =>
+                        renderSpotlight(
+                            event.target.value
+                        )
+                );
+
+        }
+
+
+        overlay.classList.add(
+            "open"
+        );
+
+
+        const input =
+            $("#spotlightInput", overlay);
+
+        input.value =
+            "";
+
+        renderSpotlight(
+            ""
+        );
+
+        input.focus();
+
+    }
+
+
+    function renderSpotlight(
+        query
+    ) {
+
+        const results =
+            byId(
+                "spotlightResults"
+            );
+
+        if (!results)
+            return;
+
+
+        const q =
+            query
+                .trim()
+                .toLowerCase();
+
+
+        results.innerHTML =
+            "";
+
+
+        const apps = [
+
+            [
+                "Files",
+                "📁",
+                openFiles
+            ],
+
+            [
+                "Notes",
+                "📝",
+                openNotes
+            ],
+
+            [
+                "Browser",
+                "🌐",
+                openBrowser
+            ],
+
+            [
+                "Terminal",
+                ">_",
+                openTerminal
+            ],
+
+            [
+                "Calculator",
+                "🧮",
+                openCalculator
+            ],
+
+            [
+                "Settings",
+                "⚙",
+                openSettings
+            ],
+
+            [
+                "Task Manager",
+                "▦",
+                openTaskManager
+            ]
+
+        ];
+
+
+        apps
+            .filter(
+                app =>
+                    app[0]
+                        .toLowerCase()
+                        .includes(q)
+            )
+            .forEach(
+                ([name, icon, action]) => {
+
+                    const button =
+                        document.createElement(
+                            "button"
+                        );
+
+                    button.type =
+                        "button";
+
+                    button.className =
+                        "spotlight-result";
+
+                    button.innerHTML = `
+
+                        <span>
+                            ${escapeHtml(
+                                icon
+                            )}
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(
+                                name
+                            )}
+                        </strong>
+
+                    `;
+
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            byId(
+                                "orbitSpotlight"
+                            )?.classList.remove(
+                                "open"
+                            );
+
+                            action();
+
+                        }
+                    );
+
+
+                    results.appendChild(
+                        button
+                    );
+
+                }
+            );
+
+
+        const fileMatches = [];
+
+
+        Object.entries(
+            folderData
+        ).forEach(
+            ([folderId, folder]) => {
+
+                folder.items.forEach(
+                    item => {
+
+                        if (
+                            !q ||
+                            item.name
+                                .toLowerCase()
+                                .includes(q)
+                        ) {
+
+                            fileMatches.push({
+                                folderId,
+                                item
+                            });
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+        fileMatches
+            .slice(
+                0,
+                12
+            )
+            .forEach(
+                ({
+                    folderId,
+                    item
+                }) => {
+
+                    const button =
+                        document.createElement(
+                            "button"
+                        );
+
+                    button.type =
+                        "button";
+
+                    button.className =
+                        "spotlight-result";
+
+                    button.innerHTML = `
+
+                        <span>
+                            ${escapeHtml(
+                                item.icon ||
+                                "📄"
+                            )}
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(
+                                item.name
+                            )}
+                        </strong>
+
+                    `;
+
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            byId(
+                                "orbitSpotlight"
+                            )?.classList.remove(
+                                "open"
+                            );
+
+                            openFiles();
+
+                            navigateTo(
+                                folderId
+                            );
+
+
+                            const card =
+                                $(
+                                    `.file-card[data-orbit-id="${CSS.escape(
+                                        item._orbitId
+                                    )}"]`
+                                );
+
+                            if (card)
+                                selectFileCard(
+                                    card
+                                );
+
+                        }
+                    );
+
+
+                    results.appendChild(
+                        button
+                    );
+
+                }
+            );
+
+
+        if (
+            !results.children.length
+        ) {
+
+            results.innerHTML = `
+                <div class="spotlight-empty">
+                    No results found
+                </div>
+            `;
+
+        }
+
+    }
+
+
+    taskbarSearch?.addEventListener(
+        "click",
+        openSpotlight
+    );
+
+
+    /* =====================================================
+       KEYBOARD SHORTCUTS
+       ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            const target =
+                event.target;
+
+            const isTyping =
+                target &&
+                (
+                    target.tagName ===
+                        "INPUT" ||
+                    target.tagName ===
+                        "TEXTAREA" ||
+                    target.tagName ===
+                        "SELECT" ||
+                    target.isContentEditable
+                );
+
+
+            if (
+                event.key ===
+                "Escape"
+            ) {
+
+                closeContextMenu();
+
+                byId(
+                    "orbitSpotlight"
+                )?.classList.remove(
+                    "open"
+                );
+
+                byId(
+                    "orbitStartMenu"
+                )?.classList.remove(
+                    "open"
+                );
+
+            }
+
+
+            if (isTyping)
+                return;
+
+
+            if (
+                event.ctrlKey &&
+                event.key.toLowerCase() ===
+                    "c" &&
+                selectedItemId
+            ) {
+
+                event.preventDefault();
+
+                copySelected();
+
+                return;
+
+            }
+
+
+            if (
+                event.ctrlKey &&
+                event.key.toLowerCase() ===
+                    "x" &&
+                selectedItemId
+            ) {
+
+                event.preventDefault();
+
+                cutSelected();
+
+                return;
+
+            }
+
+
+            if (
+                event.ctrlKey &&
+                event.key.toLowerCase() ===
+                    "v" &&
+                clipboard
+            ) {
+
+                event.preventDefault();
+
+                pasteClipboard();
+
+                return;
+
+            }
+
+
+            if (
+                event.ctrlKey &&
+                event.shiftKey &&
+                event.key.toLowerCase() ===
+                    "n"
+            ) {
+
+                event.preventDefault();
+
+                createNewFolder();
+
+                return;
+
+            }
+
+
+            if (
+                event.ctrlKey &&
+                event.shiftKey &&
+                event.key.toLowerCase() ===
+                    "t"
+            ) {
+
+                event.preventDefault();
+
+                openTerminal();
+
+                return;
+
+            }
+
+
+            if (
+                event.ctrlKey &&
+                event.code ===
+                    "Space"
+            ) {
+
+                event.preventDefault();
+
+                openSpotlight();
+
+                return;
+
+            }
+
+
+            if (
+                event.key ===
+                "Delete" &&
+                selectedItemId
+            ) {
+
+                event.preventDefault();
+
+                deleteSelected();
+
+                return;
+
+            }
+
+
+            if (
+                event.key ===
+                "F2" &&
+                selectedItemId
+            ) {
+
+                event.preventDefault();
+
+                renameSelected();
+
+                return;
+
+            }
+
+
+            if (
+                event.key ===
+                "F11"
+            ) {
+
+                event.preventDefault();
+
+                toggleFullscreen();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       CONTEXT ACTIONS
+       ===================================================== */
+
+    document.addEventListener(
+        "click",
+        event => {
+
+            const button =
+                event.target.closest(
+                    "[data-orbit-action]"
+                );
+
+
+            if (button) {
+
+                const action =
+                    button.dataset.orbitAction;
+
+                closeContextMenu();
+
+
+                if (
+                    action ===
+                    "open"
+                )
+                    openFile(
+                        selectedItem()
+                    );
+
+                else if (
+                    action ===
+                    "rename"
+                )
+                    renameSelected();
+
+                else if (
+                    action ===
+                    "copy"
+                )
+                    copySelected();
+
+                else if (
+                    action ===
+                    "cut"
+                )
+                    cutSelected();
+
+                else if (
+                    action ===
+                    "paste"
+                )
+                    pasteClipboard();
+
+                else if (
+                    action ===
+                    "delete"
+                )
+                    deleteSelected();
+
+                else if (
+                    action ===
+                    "properties"
+                )
+                    showProperties();
+
+                else if (
+                    action ===
+                    "new-folder"
+                )
+                    createNewFolder();
+
+                else if (
+                    action ===
+                    "new-file"
+                )
+                    createNewFile();
+
+                else if (
+                    action ===
+                    "refresh"
+                )
+                    renderFolder(
+                        currentFolder
+                    );
+
+                return;
+
+            }
+
+
+            if (
+                !event.target.closest(
+                    "#orbitFileContextMenu"
+                )
+            ) {
+
+                closeContextMenu();
+
+            }
+
+
+            const menu =
+                byId(
+                    "orbitStartMenu"
+                );
+
+
+            if (
+                menu &&
+                !event.target.closest(
+                    "#orbitStartMenu"
+                ) &&
+                !event.target.closest(
+                    "#taskbarOrbitButton"
+                )
+            ) {
+
+                menu.classList.remove(
+                    "open"
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       DESKTOP APP ICONS
+       ===================================================== */
+
+    $$(".desktop-app-icon")
+        .forEach(
+            icon => {
+
+                if (
+                    icon.dataset.app ===
+                    "files"
+                )
+                    return;
+
+
+                icon.addEventListener(
+                    "dblclick",
+                    () => {
+
+                        const app =
+                            icon.dataset.app;
+
+
+                        if (
+                            app ===
+                            "notes"
+                        )
+                            openNotes();
+
+                        else if (
+                            app ===
+                            "browser"
+                        )
+                            openBrowser();
+
+                        else if (
+                            app ===
+                            "terminal"
+                        )
+                            openTerminal();
+
+                        else if (
+                            app ===
+                            "calculator"
+                        )
+                            openCalculator();
+
+                        else if (
+                            app ===
+                            "settings"
+                        )
+                            openSettings();
+
+                        else if (
+                            app ===
+                            "taskmanager"
+                        )
+                            openTaskManager();
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       FULLSCREEN
+       ===================================================== */
+
+    async function toggleFullscreen() {
+
+        try {
+
+            if (
+                !document.fullscreenElement
+            ) {
+
+                await document
+                    .documentElement
+                    .requestFullscreen();
+
+                notify(
+                    "Fullscreen enabled."
+                );
+
+            }
+
+            else {
+
+                await document.exitFullscreen();
+
+                notify(
+                    "Fullscreen disabled."
+                );
+
+            }
+
+        } catch (error) {
+
+            notify(
+                "Fullscreen is not available."
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       LOCK / SHUTDOWN
+       ===================================================== */
+
+    function lockSystem() {
+
+        byId(
+            "orbitStartMenu"
+        )?.classList.remove(
+            "open"
+        );
+
+        byId(
+            "orbitSpotlight"
+        )?.classList.remove(
+            "open"
+        );
+
+        closeContextMenu();
+
+
+        if (osDesktop) {
+
+            osDesktop.classList.remove(
+                "active"
+            );
+
+            osDesktop.style.display =
+                "none";
+
+        }
+
+
+        if (lockScreen) {
+
+            lockScreen.style.display =
+                "flex";
+
+            lockScreen.classList.remove(
+                "unlocking"
+            );
+
+            lockScreen.classList.add(
+                "active"
+            );
+
+        }
+
+
+        if (unlockButton) {
+
+            unlockButton.disabled =
+                false;
+
+            unlockButton.innerHTML =
+                "<span>Unlock</span><span>→</span>";
+
+        }
+
+
+        if (pinInput) {
+
+            pinInput.value =
+                "";
+
+            pinInput.focus();
+
+        }
+
+
+        if (pinError)
+            pinError.textContent =
+                "";
+
+    }
+
+
+    function shutdownSystem() {
+
+        const overlay =
+            document.createElement(
+                "div"
+            );
+
+        overlay.className =
+            "orbit-shutdown-overlay";
+
+
+        overlay.innerHTML = `
+
+            <div class="shutdown-orbit">
+                O
+            </div>
+
+            <strong>
+                ORBIT OS
+            </strong>
+
+            <span>
+                System is now offline.
+            </span>
+
+            <button
+                id="powerOnButton"
+                type="button"
+            >
+                Power On
+            </button>
+
+        `;
+
+
+        document.body.appendChild(
+            overlay
+        );
+
+
+        requestAnimationFrame(
+            () =>
+                overlay.classList.add(
+                    "show"
+                )
+        );
+
+
+        byId(
+            "powerOnButton"
+        ).addEventListener(
+            "click",
+            () =>
+                location.reload()
+        );
+
+    }
+
+
+    /* =====================================================
+       DRAGGABLE WINDOWS
        ===================================================== */
 
     function makeWindowDraggable(
-        windowElement
+        win
     ) {
 
-        if (
-            !windowElement ||
-            !osDesktop
-        ) {
-
+        if (!win || !osDesktop)
             return;
-
-        }
 
 
         const header =
-            $(".window-header", windowElement);
+            $(".window-header", win);
 
-
-        if (!header) {
+        if (!header)
             return;
-        }
 
 
         let dragging =
             false;
 
-
         let offsetX =
             0;
-
 
         let offsetY =
             0;
 
-
-        /* Start */
 
         header.addEventListener(
             "mousedown",
@@ -2678,49 +6986,49 @@ document.addEventListener("DOMContentLoaded", () => {
                     event.target.closest(
                         ".window-controls"
                     )
-                ) {
-
+                )
                     return;
-
-                }
 
 
                 if (
-                    windowElement.classList.contains(
+                    win.classList.contains(
                         "maximized"
                     )
-                ) {
-
+                )
                     return;
-
-                }
 
 
                 dragging =
                     true;
 
 
-                windowElement.style.zIndex =
-                    "300";
+                focusWindow(
+                    win
+                );
 
 
                 const windowRect =
-                    windowElement.getBoundingClientRect();
-
+                    win.getBoundingClientRect();
 
                 const desktopRect =
                     osDesktop.getBoundingClientRect();
 
 
-                windowElement.style.left =
-                    `${windowRect.left - desktopRect.left}px`;
+                win.style.left =
+                    (
+                        windowRect.left -
+                        desktopRect.left
+                    ) + "px";
 
 
-                windowElement.style.top =
-                    `${windowRect.top - desktopRect.top}px`;
+                win.style.top =
+                    (
+                        windowRect.top -
+                        desktopRect.top
+                    ) + "px";
 
 
-                windowElement.style.transform =
+                win.style.transform =
                     "none";
 
 
@@ -2728,13 +7036,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     event.clientX -
                     windowRect.left;
 
-
                 offsetY =
                     event.clientY -
                     windowRect.top;
 
 
-                windowElement.classList.add(
+                win.classList.add(
                     "dragging"
                 );
 
@@ -2742,27 +7049,23 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        /* Move */
-
         document.addEventListener(
             "mousemove",
             event => {
 
-                if (!dragging) {
+                if (!dragging)
                     return;
-                }
 
 
                 const desktopRect =
                     osDesktop.getBoundingClientRect();
 
 
-                const windowWidth =
-                    windowElement.offsetWidth;
+                const width =
+                    win.offsetWidth;
 
-
-                const windowHeight =
-                    windowElement.offsetHeight;
+                const height =
+                    win.offsetHeight;
 
 
                 let left =
@@ -2777,73 +7080,63 @@ document.addEventListener("DOMContentLoaded", () => {
                     offsetY;
 
 
-                const minLeft =
-                    0;
-
-
-                const minTop =
-                    58;
-
-
                 const maxLeft =
                     Math.max(
                         0,
                         desktopRect.width -
-                        windowWidth
+                            width
                     );
-
 
                 const maxTop =
                     Math.max(
-                        minTop,
+                        58,
                         desktopRect.height -
-                        windowHeight -
-                        74
+                            height -
+                            74
                     );
 
 
                 left =
-                    Math.min(
-                        Math.max(
+                    Math.max(
+                        0,
+                        Math.min(
                             left,
-                            minLeft
-                        ),
-                        maxLeft
+                            maxLeft
+                        )
                     );
 
 
                 top =
-                    Math.min(
-                        Math.max(
+                    Math.max(
+                        58,
+                        Math.min(
                             top,
-                            minTop
-                        ),
-                        maxTop
+                            maxTop
+                        )
                     );
 
 
-                windowElement.style.left =
-                    `${left}px`;
+                win.style.left =
+                    left + "px";
 
-
-                windowElement.style.top =
-                    `${top}px`;
+                win.style.top =
+                    top + "px";
 
             }
         );
 
 
-        /* Stop */
-
         document.addEventListener(
             "mouseup",
             () => {
 
+                if (!dragging)
+                    return;
+
                 dragging =
                     false;
 
-
-                windowElement.classList.remove(
+                win.classList.remove(
                     "dragging"
                 );
 
@@ -2854,20 +7147,69 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       ENABLE DRAGGING
+       INITIALIZATION
        ===================================================== */
 
-    makeWindowDraggable(
-        filesWindow
-    );
+    loadFileSystem();
 
+    ensureIds();
 
-    /* =====================================================
-       INITIAL FILE VIEW
-       ===================================================== */
+    saveFileSystem();
+
+    loadNotes();
+
+    loadSettings();
+
+    applySettings();
 
     renderFolder(
         "home"
     );
+
+
+    /* =====================================================
+       PUBLIC API
+       ===================================================== */
+
+    window.ORBIT = {
+
+        openFiles,
+
+        openNotes,
+
+        openBrowser,
+
+        openTerminal,
+
+        openCalculator,
+
+        openSettings,
+
+        openTaskManager,
+
+        openSpotlight,
+
+        toggleFullscreen,
+
+        lock:
+            lockSystem,
+
+        shutdown:
+            shutdownSystem,
+
+        notify,
+
+        resetFiles:
+            () => {
+
+                localStorage.removeItem(
+                    FILES_KEY
+                );
+
+                location.reload();
+
+            }
+
+    };
 
 });
